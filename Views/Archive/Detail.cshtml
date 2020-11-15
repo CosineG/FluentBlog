@@ -1,0 +1,109 @@
+@using FluentBlog.Models
+@model FluentBlog.ViewModels.ArchiveViewModel
+<environment include="Development">
+    <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
+    <script src="~/lib/editor.md/editormd.js"></script>
+    <script src="~/lib/editor.md/lib/marked.min.js"></script>
+    <script src="~/lib/editor.md/lib/prettify.min.js"></script>
+</environment>
+
+<environment exclude="Development">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
+</environment>
+
+<style>
+    .view {
+        width: 100%;
+        height: 0;
+        padding-bottom: 30%;
+        overflow: hidden;
+    }
+</style>
+
+<div class="view">
+    <img src=@(Model.Archive.TitleImage ?? Url.Content(Model.DefaultTitleImage)) class="img-fluid card-img-top" alt="photo">
+</div>
+
+<div class="card mb-4 shadow">
+    <!--主体-->
+    <div class="card-body">
+        <div class="pl-3">
+            <span class="badge badge-primary p-2 my-1">WORKSPACE</span>
+            <span class="badge badge-warning p-2 my-1 text-white">HEALTH</span>
+            <span class="badge badge-danger p-2 my-1">COMFORT</span>
+        </div>
+        <hr>
+        <!--标题-->
+        <h3 class="card-title font-weight-bold mb-2 pl-3">
+            @{
+                @Model.Archive.Title
+            }
+        </h3>
+        <hr>
+        <div class="bg-transparent d-flex justify-content-around">
+            <span class="text-muted">
+                <i class="mi mi-People"></i> @Model.Author.DisplayName
+            </span>
+            <span class="text-muted">
+                <i class="mi mi-Calendar"></i> @Model.Archive.Created.ToShortDateString()
+            </span>
+            <span class="text-muted">
+                <i class="mi mi-View"></i> @Model.Archive.Views
+            </span>
+            <span class="text-muted">
+                <i class="mi mi-Comment"></i> @Model.Archive.CommentsNum
+            </span>
+        </div>
+        <hr>
+        <div id="description">
+            <div class="progress-cover progress-cover-primary" id="progress-cover">
+                <div class="progress progress-medium fluent-position">
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                </div>
+            </div>
+
+            <textarea style="display: none;">@Model.Archive.Text</textarea>
+
+        </div>
+        <!--版权说明-->
+        <div class="card-footer bg-transparent justify-content-around">
+            <p>
+                版权说明：若无另外注明，博客中文章皆为原创，转载请保留文章出处<br>
+                本文原址：<a href="@Model.Url">@Model.Url</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section SecondSidebar{
+    <div class="card shadow pt-2 pb-2" id="catalog">
+
+        <div class="markdown-body editormd-preview-container p-1" id="toc-container">
+            #toc-container
+        </div>
+    </div>
+}
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            var editormdView = editormd.markdownToHTML("description",
+                {
+                    path: "lib/editor.md/lib",
+                    tocStartLevel: 2,
+                    tocContainer: "#toc-container",
+                    tocDropdown: false
+                });
+
+            document.getElementById("progress-cover").style.display = "none";
+        });
+    </script>
+}

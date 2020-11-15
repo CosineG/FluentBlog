@@ -1,0 +1,112 @@
+@using FluentBlog.Models
+@model FluentBlog.ViewModels.HomeViewModel
+<style>
+    .view {
+        width: 100%;
+        height: 0;
+        padding-bottom: 30%;
+        overflow: hidden;
+    }
+</style>
+@{
+    for (int i = 0; i < Model.Archives.Count; i++)
+    {
+        <!--文章块-->
+        <div class="card mb-4 shadow">
+
+            <!--标题图-->
+            <div class="view">
+                <a asp-controller="Archive" asp-action="Detail" asp-route-aid="@Model.Archives[i].Aid">
+                    <img src=@Model.Archives[i].TitleImage class="img-fluid card-img-top" alt="photo">
+                </a>
+            </div>
+
+            <!--主体-->
+            <div class="card-body">
+                <span class="badge badge-primary p-2 my-1">WORKSPACE</span>
+                <span class="badge badge-warning p-2 my-1 text-white">HEALTH</span>
+                <span class="badge badge-danger p-2 my-1">COMFORT</span>
+                <!--标题-->
+                <h3 class="card-title font-weight-bold mb-2">
+                    <a id="title" class="text-dark text-decoration-none" asp-controller="Archive" asp-action="Detail" asp-route-aid="@Model.Archives[i].Aid">@Model.Archives[i].Title</a>
+                    @if (i == 0 && Model.PageNum == 1)
+                    {
+                        <span class="badge badge-success">New</span>
+                    }
+                </h3>
+
+                <!--概要-->
+                @{
+                    if (Model.Archives[i].Text.Length > 300)
+                    {
+                        <p class="card-text">
+                            @(Model.Archives[i].Text.Substring(0, 300) + "…")
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="card-text">
+                            @Model.Archives[i].Text
+                        </p>
+                    }
+                }
+                <a class="text-primary" asp-controller="Archive" asp-action="Detail" asp-route-aid="@Model.Archives[i].Aid">
+                    阅读全文
+                    <i class="mi mi-ChevronRight"></i>
+                </a>
+            </div>
+            <!--信息和数据-->
+            <div class="card-footer bg-transparent d-flex justify-content-around">
+                <span class="text-muted">
+                    <i class="mi mi-People"></i> @Model.Authors[i].DisplayName
+                </span>
+                <span class="text-muted">
+                    <i class="mi mi-Calendar"></i> @Model.Archives[i].Created.ToShortDateString()
+                </span>
+                <span class="text-muted">
+                    <i class="mi mi-View"></i> @Model.Archives[i].Views
+                </span>
+                <span class="text-muted">
+                    <i class="mi mi-Comment"></i> @Model.Archives[i].CommentsNum
+                </span>
+            </div>
+        </div>
+    }
+}
+<nav id="page-navigation">
+    <ul class="pagination justify-content-center">
+        <li class="page-item shadow">
+            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" aria-label="First">
+                <span aria-hidden="true">
+                    <i class="mi mi-ChevronLeft"></i> 首页
+                </span>
+            </a>
+        </li>
+        @if (Model.PageNum != 1)
+        {
+            <li class="page-item shadow">
+                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageNum - 1)">@(Model.PageNum - 1)</a>
+            </li>
+        }
+        <li class="page-item shadow active">
+            <a class="page-link text-dark">@Model.PageNum</a>
+        </li>
+        @if (Model.PageNum != Model.PageCount)
+        {
+            <li class="page-item shadow">
+                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageNum + 1)">@(Model.PageNum + 1)</a>
+            </li>
+        }
+        <li class="page-item shadow">
+            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@Model.PageCount" aria-label="Last">
+                <span aria-hidden="true">
+                    末页 <i class="mi mi-ChevronRight"></i>
+                </span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+@section Scripts{
+    <script src="~/js/CustomScript.js"></script>
+}
