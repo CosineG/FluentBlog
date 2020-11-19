@@ -13,14 +13,15 @@ namespace FluentBlog.Infrastructure
         public static void Seed(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Meta>().HasData(
-                 new Meta
-                 {
-                     Mid = -1,
-                     Name = "未归类",
-                     Slug = "Uncategorized",
-                     Type = "category"
-                 }
-             );
+                new Meta
+                {
+                    Mid = 1,
+                    Name = "未归类",
+                    Slug = "Uncategorized",
+                    Type = "category",
+                    Default = true
+                }
+            );
             modelBuilder.Entity<Archive>().HasData(
                 new Archive
                 {
@@ -36,6 +37,11 @@ namespace FluentBlog.Infrastructure
                 {
                     Name = "BlogName",
                     Value = "Fluent Blog"
+                },
+                new Setting
+                {
+                    Name = "ArchivesCountPerPage",
+                    Value = "5"
                 }
             );
         }

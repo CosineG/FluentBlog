@@ -30,18 +30,23 @@
 <div class="card mb-4 shadow">
     <!--主体-->
     <div class="card-body">
-        <div class="pl-3">
-            <span class="badge badge-primary p-2 my-1">WORKSPACE</span>
-            <span class="badge badge-warning p-2 my-1 text-white">HEALTH</span>
-            <span class="badge badge-danger p-2 my-1">COMFORT</span>
-        </div>
-        <hr>
         <!--标题-->
         <h3 class="card-title font-weight-bold mb-2 pl-3">
             @{
                 @Model.Archive.Title
             }
         </h3>
+        <hr>
+        <div class="pl-3">
+            @{
+                for (int i = 0; i < Model.Categories.Count; i++)
+                {
+                    <span class="pl-0 pr-2 m-0">
+                        <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[i]" asp-controller="Meta" asp-action="Index" asp-route-slug="@Model.Categories[i].Slug">@Model.Categories[i].Name</a>
+                    </span>
+                }
+            }
+        </div>
         <hr>
         <div class="bg-transparent d-flex justify-content-around">
             <span class="text-muted">
@@ -58,6 +63,8 @@
             </span>
         </div>
         <hr>
+
+        <!--加载动画-->
         <div id="description">
             <div class="progress-cover progress-cover-primary" id="progress-cover">
                 <div class="progress progress-medium fluent-position">
@@ -86,7 +93,16 @@
     <div class="card shadow pt-2 pb-2" id="catalog">
 
         <div class="markdown-body editormd-preview-container p-1" id="toc-container">
-            #toc-container
+            <!--加载动画-->
+            <div class="progress-cover progress-cover-primary">
+                <div class="progress progress-medium fluent-position">
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                </div>
+            </div>
         </div>
     </div>
 }

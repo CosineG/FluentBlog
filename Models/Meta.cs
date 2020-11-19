@@ -24,5 +24,7 @@ namespace FluentBlog.Models
         public string Type { get; set; }
         // 描述
         public string Description { get; set; }
+        // 默认
+        public bool Default { get; set; }
     }
 }

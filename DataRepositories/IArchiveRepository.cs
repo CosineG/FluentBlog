@@ -11,15 +11,15 @@ namespace FluentBlog.DataRepositories
         // 增
         Archive Insert(Archive archive);
         // 删
-        Archive Delete(int id);
+        bool Delete(int id);
         // 改
         Archive Update(Archive updateArchive);
         // 查
         Archive GetArchiveById(int aid);
         // 查询文章总数
-        int GetArchivesNum();
+        int GetArchivesCount();
         // 获得第几页的文章
-        List<Archive> GetArchivesByPage(int page, int archivesPerPage);
+        List<Archive> GetArchivesByPage(int page, int archivesCountPerPage);
         // 没有标题图时随机调用默认标题图
         string GetDefaultTitleImage();
         // markdown转纯文本（用于显示文章摘要）

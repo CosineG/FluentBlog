@@ -1,5 +1,5 @@
 @using FluentBlog.Models
-@model FluentBlog.ViewModels.HomeViewModel
+@model FluentBlog.ViewModels.MetaViewModel
 <style>
     .view {
         width: 100%;
@@ -8,6 +8,30 @@
         overflow: hidden;
     }
 </style>
+
+<div>
+    <div class="card mb-4 shadow">
+        <div class="card-body">
+            @{
+                string pageInfo = "";
+                if (Model.PageNum != 1)
+                {
+                    pageInfo = " - " + "第" + Model.PageNum + "页";
+                }
+                switch (Model.CurrentMeta.Type)
+                {
+                    case "category":
+                        <h2 class="card-title font-weight-bold m-0">分类：@Model.CurrentMeta.Name@pageInfo</h2>
+                        break;
+                    case "tag":
+                        <h2 class="card-title font-weight-bold m-0">标签：@Model.CurrentMeta.Name@pageInfo</h2>
+                        break;
+                }
+            }
+        </div>
+    </div>
+</div>
+
 @{
     for (int i = 0; i < Model.Archives.Count; i++)
     {
@@ -81,10 +105,11 @@
         </div>
     }
 }
+<!--分页导航-->
 <nav id="page-navigation">
     <ul class="pagination justify-content-center">
         <li class="page-item shadow">
-            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" aria-label="First">
+            <a class="page-link text-dark" asp-controller="Meta" asp-action="Index" asp-route-slug="@Model.CurrentMeta.Slug" aria-label="First">
                 <span aria-hidden="true">
                     <i class="mi mi-ChevronLeft"></i> 首页
                 </span>
@@ -93,7 +118,7 @@
         @if (Model.PageNum != 1)
         {
             <li class="page-item shadow">
-                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageNum - 1)">@(Model.PageNum - 1)</a>
+                <a class="page-link text-dark" asp-controller="Meta" asp-action="Index" asp-route-slug="@Model.CurrentMeta.Slug" asp-route-page="@(Model.PageNum - 1)">@(Model.PageNum - 1)</a>
             </li>
         }
         <li class="page-item shadow active">
@@ -102,11 +127,11 @@
         @if (Model.PageNum != Model.PageCount)
         {
             <li class="page-item shadow">
-                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageNum + 1)">@(Model.PageNum + 1)</a>
+                <a class="page-link text-dark" asp-controller="Meta" asp-action="Index" asp-route-slug="@Model.CurrentMeta.Slug" asp-route-page="@(Model.PageNum + 1)">@(Model.PageNum + 1)</a>
             </li>
         }
         <li class="page-item shadow">
-            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@Model.PageCount" aria-label="Last">
+            <a class="page-link text-dark" asp-controller="Meta" asp-action="Index" asp-route-slug="@Model.CurrentMeta.Slug" asp-route-page="@Model.PageCount" aria-label="Last">
                 <span aria-hidden="true">
                     末页 <i class="mi mi-ChevronRight"></i>
                 </span>

@@ -11,10 +11,10 @@ namespace FluentBlog.DataRepositories
         // 增
         Relationship Insert(Relationship meta);
         // 删
-        Relationship Delete(int mid, int aid);
+        bool Delete(int? mid = null, int? aid = null);
         // 用文章id查分类id
         List<Archive> GetArchivesByMetaId(int mid);
         // 用分类id查文章id
-        List<Meta> GetMetasByArchiveId(int aid);
+        List<Meta> GetMetasByArchiveId(int aid, string type ="");
     }
 }
