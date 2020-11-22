@@ -24,5 +24,7 @@ namespace FluentBlog.DataRepositories
         string GetDefaultTitleImage();
         // markdown转纯文本（用于显示文章摘要）
         string MarkdownToPlainText(string content);
+        // 增加浏览次数
+        Archive AddViewsCount(Archive archive);
     }
 }

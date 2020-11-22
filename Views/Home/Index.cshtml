@@ -17,7 +17,7 @@
             <!--标题图-->
             <div class="view">
                 <a asp-controller="Archive" asp-action="Index" asp-route-aid="@Model.Archives[i].Aid">
-                    <img src=@Model.Archives[i].TitleImage class="img-fluid card-img-top" alt="photo">
+                    <img src=@Url.Content(Model.Archives[i].TitleImage) class="img-fluid card-img-top" alt="photo">
                 </a>
             </div>
 
@@ -38,7 +38,7 @@
                         for (int j = 0; j < Model.Categories[i].Count; j++)
                         {
                             <span class="pl-0 pr-2 m-0">
-                                <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[j]" asp-controller="Meta" asp-action="Index" asp-route-slug="@Model.Categories[i][j].Slug">@Model.Categories[i][j].Name</a>
+                                <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[j]" asp-controller="Home" asp-action="Meta" asp-route-slug="@Model.Categories[i][j].Slug">@Model.Categories[i][j].Name</a>
                             </span>
                         }
                     }
@@ -63,48 +63,54 @@
                     <i class="mi mi-ChevronRight"></i>
                 </a>
             </div>
-            <!--信息和数据-->
+            <!-- 文章信息 -->
             <div class="card-footer bg-transparent d-flex justify-content-around">
                 <span class="text-muted">
-                    <i class="mi mi-People"></i> @Model.Authors[i].DisplayName
+                    <i class="mi mi-Contact" title="作者"></i> @Model.Authors[i].DisplayName
                 </span>
                 <span class="text-muted">
-                    <i class="mi mi-Calendar"></i> @Model.Archives[i].Created.ToShortDateString()
+                    <i class="mi mi-Calendar" title="发表日期"></i> @Model.Archives[i].Created.ToShortDateString()
                 </span>
                 <span class="text-muted">
-                    <i class="mi mi-View"></i> @Model.Archives[i].Views
+                    <i class="mi mi-View" title="阅读次数"></i> @Model.Archives[i].Views
                 </span>
                 <span class="text-muted">
-                    <i class="mi mi-Comment"></i> @Model.Archives[i].CommentsNum
+                    <i class="mi mi-Comment" title="评论数"></i> @Model.Archives[i].CommentsNum
                 </span>
             </div>
         </div>
     }
 }
+<!--分页导航-->
 <nav id="page-navigation">
     <ul class="pagination justify-content-center">
+        <!--首页-->
         <li class="page-item shadow">
-            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" aria-label="First">
+            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="">
                 <span aria-hidden="true">
                     <i class="mi mi-ChevronLeft"></i> 首页
                 </span>
             </a>
         </li>
+        <!--前一页-->
         @if (Model.PageNum != 1)
         {
             <li class="page-item shadow">
                 <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageNum - 1)">@(Model.PageNum - 1)</a>
             </li>
         }
+        <!--当前页-->
         <li class="page-item shadow active">
             <a class="page-link text-dark">@Model.PageNum</a>
         </li>
+        <!--后一页-->
         @if (Model.PageNum != Model.PageCount)
         {
             <li class="page-item shadow">
                 <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageNum + 1)">@(Model.PageNum + 1)</a>
             </li>
         }
+        <!--末页-->
         <li class="page-item shadow">
             <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@Model.PageCount" aria-label="Last">
                 <span aria-hidden="true">

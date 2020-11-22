@@ -1,6 +1,8 @@
+@using FluentBlog.ViewComponents
 <!DOCTYPE HTML>
 <html>
 <head>
+    <title>@ViewBag.Title</title>
     <meta name="viewport" content="width=device-width"/>
     <link href="~/css/reset.css" rel="stylesheet"/>
     <environment include="Development">
@@ -26,129 +28,96 @@
     <link href="~/lib/FDBootstrap/css/fluent.css" rel="stylesheet"/>
     <link href="~/lib/FDBootstrap/css/micon.min.css" rel="stylesheet"/>
     <link href="~/css/site.css" rel="stylesheet" asp-append-version="true"/>
-    <title>@ViewBag.Title</title>
 
     <style>
-        .container-fluid { margin-top: 60px; }
-
-        #top-navbar { height: 60px; }
-
-        #sidebar {
-            width: 100%;
-            top: 120px;
-        }
+        #sidebar { top: 8rem; }
 
         #avator {
             width: 60%;
             height: 60%;
         }
-
-        #content {
-            padding: 30px;
-            margin-top: 60px;
-            background-color: #FAF9F8;
-        }
-
-        #second-sidebar {
-            padding: 30px;
-            margin-top: 60px;
-            background-color: #FAF9F8;
-        }
+        #background { background-color: #FAF9F8; }
     </style>
 
 </head>
 <body onhashchange="fix_the_nav();">
-    <div class="container-fluid m-0">
-        <!-- 顶部导航栏 -->
-
-        <nav class="navbar fixed-top navbar-expand-md  navbar-light bg-white" id="top-navbar">
-            <div class="border-right pl-md-5 pr-md-3">
-                <a class="navbar-brand navbar-left pl-md-3">Fluent Blog</a>
-            </div>
-            <ul class="navbar-nav mr-auto pl-md-3">
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">首页</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link">Left Link 2</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown pr-md-5">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="mi mi-Contact"></i>
-                        &nbsp;登录&nbsp;
+<div class="container-fluid m-0">
+    <!-- 主体 -->
+    <div class="row" id="background">
+        <!-- 侧边栏 -->
+        <div class="offset-1 col-md-2 d-md-block d-none bg-white shadow">
+            <div class="nav sticky-top flex-column" id="sidebar">
+                <!-- 头像 -->
+                <img class="m-auto rounded-circle" src="~/images/avator.jpg" id="avator" alt="">
+                <div>
+                    <h4 class="text-center py-3 m-0">@ViewBag.Settings["BlogName"]</h4>
+                </div>
+                <!-- 简介 -->
+                <div class="text-center pb-3 px-4 text-secondary small">
+                    @ViewBag.Settings["BlogIntro"]
+                </div>
+                <!-- 按钮 -->
+                <div class="pt-2 p-4 border-top">
+                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Index" asp-route-page="">
+                        <i class="mi mi-Home "></i>
+                        首页
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action with a lot of text inside of an item</a>
-                    </div>
-                </li>
-            </ul>
-        </nav>
-        <!-- 主体 -->
-        <div class="row">
-            <!-- 侧边栏 -->
-            <div class="col-md-3 d-md-block d-none">
-                <div class="nav sticky-top flex-column pl-md-5" id="sidebar">
-                    <img class="m-auto rounded-circle" src="~/images/avator.jpg" id="avator" alt="">
-                    <div>
-                        <h3 class="text-center pt-3 pb-3">余弦G</h3>
-                    </div>
-                    <div class="pt-2 p-4 border-top">
-                        <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Index">
-                            <i class="mi mi-Home "></i>
-                            首页
-                        </a>
-                        <a type="button" class="btn btn-block bg-white ml-0">
-                            <i class="mi mi-Code"></i>
-                            分类1
-                        </a>
-                        <a type="button" class="btn btn-block bg-white ml-0">
-                            <i class="mi mi-PhoneBook"></i>
-                            分类2
-                        </a>
-                        <a type="button" class="btn btn-block bg-white ml-0">
-                            <i class="mi mi-AddFriend"></i>
-                            友链
-                        </a>
-                        <a type="button" class="btn btn-block bg-white ml-0">
-                            <i class="mi mi-Contact"></i>
-                            关于
-                        </a>
-                    </div>
+                    <a type="button" class="btn btn-block bg-white ml-0">
+                        <i class="mi mi-Link"></i>
+                        友链
+                    </a>
+                    <a type="button" class="btn btn-block bg-white ml-0">
+                        <i class="mi mi-Contact"></i>
+                        关于
+                    </a>
                 </div>
             </div>
-            <!-- 文章部分 -->
-            <div class="col-md-7" id="content">
-                @RenderBody()
-            </div>
-            <div class="col-md-2 pl-0" id="second-sidebar">
-                @if (IsSectionDefined("SecondSidebar"))
-                {
-                    @await RenderSectionAsync("SecondSidebar", required: false)
-                }
-            </div>
         </div>
+        <div class="col-md-8">
+            <div class="row">
+                <!-- 文章卡片区 -->
+                <div class="col-md-9 pt-4 pb-0 px-4" id="content">
+                    @RenderBody()
+                    <!-- 页尾 -->
+                    <footer class="page-footer shadow">
+                        <div class="footer-copyright bg-white text-dark text-center small py-3 ">
+                            © 2018 Copyright:
+                            <a href="https://mdbootstrap.com/bootstrap-tutorial/" class="text-dark"> MDBootstrap.com</a>
+                        </div>
+                    </footer>
 
-    </div>
-    <!-- 页脚 -->
-    <footer class="page-footer">
-        <!-- Copyright -->
-        <div class="footer-copyright text-center py-3 text-dark bg-white">
-            © 2020 Copyright:
-            <a href="https://www.cosineg.com/" class="text-dark"> cosineg.com</a>
+                </div>
+                <!-- 右侧边栏 -->
+                <div class="col-md-3 pt-4 px-0" id="second-sidebar">
+
+                    <!-- 动态栏 -->
+                    @if (ViewBag.Settings["FeedSwitch"] == "on")
+                    {
+                        @await Component.InvokeAsync("FeedBlock")
+                    }
+
+                    @if (IsSectionDefined("SecondSidebar"))
+                    {
+                        @await RenderSectionAsync("SecondSidebar", required: false)
+                    }
+                </div>
+            </div>
         </div>
-    </footer>
-    <script>
-        function fix_the_nav() {
-            var target = document.documentElement.scrollTop - 60;
-            document.documentElement.scrollTop = target;
-        }
-    </script>
-    @if (IsSectionDefined("Scripts"))
-    {
-        @await RenderSectionAsync("Scripts", required: false)
+    </div>
+
+
+</div>
+
+
+<script>
+    function fix_the_nav() {
+        var target = document.documentElement.scrollTop - 60;
+        document.documentElement.scrollTop = target;
     }
+</script>
+@if (IsSectionDefined("Scripts"))
+{
+    @await RenderSectionAsync("Scripts", required: false)
+}
 </body>
 </html>

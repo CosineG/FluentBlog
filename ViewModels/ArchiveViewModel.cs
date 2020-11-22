@@ -11,6 +11,7 @@ namespace FluentBlog.ViewModels
         public Archive Archive { get; set; }
         public User Author { get; set; }
         public List<Meta> Categories { get; set; }
+        public List<Meta> Tags { get; set; }
         public string DefaultTitleImage { get; set; }
         public string Url { get; set; }
 

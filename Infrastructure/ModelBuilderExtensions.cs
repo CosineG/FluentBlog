@@ -17,7 +17,7 @@ namespace FluentBlog.Infrastructure
                 {
                     Mid = 1,
                     Name = "未归类",
-                    Slug = "Uncategorized",
+                    Slug = "uncategorized",
                     Type = "category",
                     Default = true
                 }
@@ -40,8 +40,18 @@ namespace FluentBlog.Infrastructure
                 },
                 new Setting
                 {
+                    Name = "BlogIntro",
+                    Value = "现在向第一缕阳光宣誓，走出尘埃与那茫然彷徨。"
+                },
+                new Setting
+                {
                     Name = "ArchivesCountPerPage",
                     Value = "5"
+                },
+                new Setting
+                {
+                    Name = "FeedSwitch",
+                    Value = "on"
                 }
             );
         }

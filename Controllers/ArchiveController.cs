@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FluentBlog.Controllers
 {
-    public class ArchiveController : Controller
+    public class ArchiveController : BaseController
     {
         private readonly IRelationshipRepository _relationshipRepository;
         private readonly IArchiveRepository _archiveRepository;
@@ -22,7 +22,7 @@ namespace FluentBlog.Controllers
 
         public ArchiveController(IRelationshipRepository relationshipRepository, IArchiveRepository archiveRepository,
             CustomUserManager customUserManager, IHttpContextAccessor httpContextAccessor,
-            ISettingRepository settingRepository)
+            ISettingRepository settingRepository) : base(settingRepository)
         {
             _relationshipRepository = relationshipRepository;
             _archiveRepository = archiveRepository;
@@ -31,6 +31,7 @@ namespace FluentBlog.Controllers
             _settingRepository = settingRepository;
         }
 
+        [Route("/archive/{aid}")]
         public ViewResult Index(int aid)
         {
             Archive archive = _archiveRepository.GetArchiveById(aid);
@@ -40,17 +41,20 @@ namespace FluentBlog.Controllers
                 Response.StatusCode = 404;
                 return View("ArchiveNotFound", aid);
             }
-
+            archive = _archiveRepository.AddViewsCount(archive);
             // 查询作者
             User author = _customUserManager.GetUserById(archive.Uid);
             List<Meta> categories = _relationshipRepository.GetMetasByArchiveId(archive.Aid, "category");
-            ArchiveViewModel archiveViewModel = new ArchiveViewModel()
+            List<Meta> tags = _relationshipRepository.GetMetasByArchiveId(archive.Aid, "tag");
+            
+            ArchiveViewModel archiveViewModel = new ArchiveViewModel
             {
                 Archive = archive,
                 Author = author,
                 DefaultTitleImage = _archiveRepository.GetDefaultTitleImage(),
                 Url = _httpContextAccessor.HttpContext?.Request?.GetDisplayUrl(),
-                Categories = categories
+                Categories = categories,
+                Tags = tags
             };
             var settings = _settingRepository.GetSettings();
             ViewBag.Title = archive.Title + " - " + settings["BlogName"];

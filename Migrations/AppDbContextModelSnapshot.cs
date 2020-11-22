@@ -62,6 +62,29 @@ namespace FluentBlog.Migrations
                         });
                 });
 
+            modelBuilder.Entity("FluentBlog.Models.Feed", b =>
+                {
+                    b.Property<int>("Fid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<string>("Uid")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.HasKey("Fid");
+
+                    b.ToTable("Feeds");
+                });
+
             modelBuilder.Entity("FluentBlog.Models.File", b =>
                 {
                     b.Property<int>("Fid")
@@ -113,7 +136,7 @@ namespace FluentBlog.Migrations
                             Mid = 1,
                             Default = true,
                             Name = "未归类",
-                            Slug = "Uncategorized",
+                            Slug = "uncategorized",
                             Type = "category"
                         });
                 });
@@ -155,8 +178,23 @@ namespace FluentBlog.Migrations
                         },
                         new
                         {
+                            Name = "BloggerName",
+                            Value = "余弦G"
+                        },
+                        new
+                        {
+                            Name = "BlogIntro",
+                            Value = "现在向第一缕阳光宣誓，走出尘埃与那茫然彷徨。"
+                        },
+                        new
+                        {
                             Name = "ArchivesCountPerPage",
                             Value = "5"
+                        },
+                        new
+                        {
+                            Name = "FeedSwitch",
+                            Value = "on"
                         });
                 });
 

@@ -84,7 +84,7 @@ namespace FluentBlog.DataRepositories
             DirectoryInfo defaultTitleImageFolder = new DirectoryInfo(defaultTitleImageFolderPath);
             FileInfo[] images = defaultTitleImageFolder.GetFiles();
             Random random = new Random();
-            return Path.Combine("images", "defaultTitleImages", images[random.Next(0, images.Length)].Name);
+            return "~/" + Path.Combine("images", "defaultTitleImages", images[random.Next(0, images.Length)].Name);
         }
 
         // 删除markdown语法标记，用作文章预览内容
@@ -124,6 +124,14 @@ namespace FluentBlog.DataRepositories
                 @"\s/g"
             };
             return patterns.Aggregate(content, (current, pattern) => Regex.Replace(current, pattern, ""));
+        }
+
+        // 增加浏览次数
+        public Archive AddViewsCount(Archive archive)
+        {
+            archive.Views += 1;
+            Update(archive);
+            return archive;
         }
     }
 }

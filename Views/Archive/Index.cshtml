@@ -42,24 +42,25 @@
                 for (int i = 0; i < Model.Categories.Count; i++)
                 {
                     <span class="pl-0 pr-2 m-0">
-                        <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[i]" asp-controller="Meta" asp-action="Index" asp-route-slug="@Model.Categories[i].Slug">@Model.Categories[i].Name</a>
+                        <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[i]" asp-controller="Home" asp-action="Meta" asp-route-slug="@Model.Categories[i].Slug">@Model.Categories[i].Name</a>
                     </span>
                 }
             }
         </div>
         <hr>
+        <!-- 文章信息 -->
         <div class="bg-transparent d-flex justify-content-around">
             <span class="text-muted">
-                <i class="mi mi-People"></i> @Model.Author.DisplayName
+                <i class="mi mi-Contact" title="作者"></i> @Model.Author.DisplayName
             </span>
             <span class="text-muted">
-                <i class="mi mi-Calendar"></i> @Model.Archive.Created.ToShortDateString()
+                <i class="mi mi-Calendar" title="发表日期"></i> @Model.Archive.Created.ToShortDateString()
             </span>
             <span class="text-muted">
-                <i class="mi mi-View"></i> @Model.Archive.Views
+                <i class="mi mi-View" title="阅读次数"></i> @Model.Archive.Views
             </span>
             <span class="text-muted">
-                <i class="mi mi-Comment"></i> @Model.Archive.CommentsNum
+                <i class="mi mi-Comment" title="评论数"></i> @Model.Archive.CommentsNum
             </span>
         </div>
         <hr>
@@ -90,9 +91,12 @@
 </div>
 
 @section SecondSidebar{
-    <div class="card shadow pt-2 pb-2" id="catalog">
-
-        <div class="markdown-body editormd-preview-container p-1" id="toc-container">
+    <div class="card shadow mb-4 py-2 px-1" id="catalog">
+        <div class="card-body pb-0">
+                <h5><i class="mi mi-AllApps"></i> 文章目录</h5>
+        </div>
+        <!--markdown toc-->
+        <div class="markdown-body editormd-preview-container py-1 px-1 small" id="toc-container">
             <!--加载动画-->
             <div class="progress-cover progress-cover-primary">
                 <div class="progress progress-medium fluent-position">
@@ -105,6 +109,19 @@
             </div>
         </div>
     </div>
+
+    @if (Model.Tags.Count != 0)
+    {
+        <div class="card shadow py-2 mb-4">
+            <div class="card-body">
+                <h5><i class="mi mi-Tag"></i> 文章标签</h5>
+                @foreach (var m in Model.Tags)
+                {
+                    <a class="small" asp-controller="Home" asp-action="Meta" asp-route-slug="@m.Slug"> #@m.Name </a>
+                }
+            </div>
+        </div>
+    }
 }
 
 @section Scripts{

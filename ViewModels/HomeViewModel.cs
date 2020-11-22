@@ -8,6 +8,7 @@ namespace FluentBlog.ViewModels
 {
     public class HomeViewModel
     {
+        public Meta CurrentMeta { get; set; }
         public List<Archive> Archives { get; set; }
         public List<User> Authors { get; set; }
         public List<List<Meta>> Categories { get; set; }

@@ -15,6 +15,8 @@ namespace FluentBlog.Infrastructure
         public DbSet<Meta> Metas { get; set; }
         // 文章
         public DbSet<Archive> Archives { get; set; }
+        // 动态
+        public DbSet<Feed> Feeds { get; set; }
         // 文章和分类的索引
         public DbSet<Relationship> Relationships { get; set; }
         // 文件

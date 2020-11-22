@@ -50,6 +50,7 @@ namespace FluentBlog
             // 依赖注入仓储
             services.AddScoped<IMetaRepository, SqlMetaRepository>();
             services.AddScoped<IArchiveRepository, SqlArchiveRepository>();
+            services.AddScoped<IFeedRepository, SqlFeedRepository>();
             services.AddScoped<IRelationshipRepository, SqlRelationshipRepository>();
             services.AddScoped<ISettingRepository, SqlSettingRepository>();
         }
