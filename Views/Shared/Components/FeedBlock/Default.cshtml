@@ -1,0 +1,28 @@
+@using FluentBlog.Models
+@using System.Globalization
+@model FluentBlog.ViewModels.FeedViewModel
+
+<div class="card shadow py-2 mb-4">
+    <div class="card-body">
+        <h5><i class="mi mi-Feedback"></i> 动态</h5>
+        <blockquote class="blockquote mt-2">
+            <h6 class="font-weight-bold">@@@Model.Authors[0].DisplayName：</h6>
+            <p class="mb-1 small">@Model.Feeds[0].Text</p>
+        </blockquote>
+        <div class="card-footer bg-transparent d-flex justify-content-around px-0">
+            <span class="text-muted small">
+                <i class="mi mi-ClockLegacy small" data-toggle="tooltip" data-placement="top" title="发布时间"></i> @Model.Feeds[0].Created.ToString(CultureInfo.CurrentCulture)
+            </span>
+            <span class="text-muted small">
+                &nbsp;&nbsp;&nbsp;&nbsp;
+            </span>
+            <span class="text-muted small">
+                <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="赞"></i> @Model.Feeds[0].Likes
+            </span>
+        </div>
+        <a class="text-primary small d-block text-right" asp-controller="Archive" asp-action="Index">
+            查看更多
+            <i class="mi mi-ChevronRight small"></i>
+        </a>
+    </div>
+</div>

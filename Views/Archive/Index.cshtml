@@ -51,16 +51,16 @@
         <!-- 文章信息 -->
         <div class="bg-transparent d-flex justify-content-around">
             <span class="text-muted">
-                <i class="mi mi-Contact" title="作者"></i> @Model.Author.DisplayName
+                <i class="mi mi-Contact" data-toggle="tooltip" data-placement="top" title="作者"></i> @Model.Author.DisplayName
             </span>
             <span class="text-muted">
-                <i class="mi mi-Calendar" title="发表日期"></i> @Model.Archive.Created.ToShortDateString()
+                <i class="mi mi-Calendar" data-toggle="tooltip" data-placement="top" title="发表日期"></i> @Model.Archive.Created.ToShortDateString()
             </span>
             <span class="text-muted">
-                <i class="mi mi-View" title="阅读次数"></i> @Model.Archive.Views
+                <i class="mi mi-View" data-toggle="tooltip" data-placement="top" title="阅读次数"></i> @Model.Archive.Views
             </span>
             <span class="text-muted">
-                <i class="mi mi-Comment" title="评论数"></i> @Model.Archive.CommentsNum
+                <i class="mi mi-Comment" data-toggle="tooltip" data-placement="top" title="评论数"></i> @Model.Archive.CommentsNum
             </span>
         </div>
         <hr>
@@ -96,6 +96,7 @@
                 <h5><i class="mi mi-AllApps"></i> 文章目录</h5>
         </div>
         <!--markdown toc-->
+        @* <div class="markdown-body editormd-preview-container py-1 px-1 small text-truncate d-inline-block" style="overflow: hidden" id="toc-container"> *@
         <div class="markdown-body editormd-preview-container py-1 px-1 small" id="toc-container">
             <!--加载动画-->
             <div class="progress-cover progress-cover-primary">
@@ -135,7 +136,6 @@
                     tocContainer: "#toc-container",
                     tocDropdown: false
                 });
-
             document.getElementById("progress-cover").style.display = "none";
         });
     </script>

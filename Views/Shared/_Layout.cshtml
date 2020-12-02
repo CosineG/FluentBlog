@@ -8,7 +8,7 @@
     <environment include="Development">
         <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet"/>
         <script src="~/lib/jquery/jquery.js"></script>
-        <script src="~/lib/twitter-bootstrap/js/bootstrap.js"></script>
+        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
     </environment>
 
     <environment exclude="Development">
@@ -22,7 +22,7 @@
               asp-fallback-test-value="absolute"
               asp-suppress-fallback-integrity="true"/>
         <script src="~/lib/jquery/jquery.js"></script>
-        <script src="~/lib/twitter-bootstrap/js/bootstrap.js"></script>
+        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
     </environment>
 
     <link href="~/lib/FDBootstrap/css/fluent.css" rel="stylesheet"/>
@@ -36,11 +36,25 @@
             width: 60%;
             height: 60%;
         }
+
         #background { background-color: #FAF9F8; }
+
+        .toolbar {
+            width: 50px !important;
+            height: 50px
+        }
+
+        .mi-lg {
+            font-size: 1.33333333em !important;
+            line-height: 0.75em !important;
+            vertical-align: -30% !important
+        }
     </style>
 
 </head>
-<body onhashchange="fix_the_nav();">
+@* <body onhashchange="fix_the_nav();"> *@
+<body>
+<header id="top"></header>
 <div class="container-fluid m-0">
     <!-- 主体 -->
     <div class="row" id="background">
@@ -103,6 +117,16 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-1 d-md-block d-none fixed-bottom ml-auto">
+            <div class="btn-group-vertical m-0">
+                <button type="button" class="btn toolbar bg-white shadow p-1" data-toggle="tooltip" data-placement="left" title="后台管理">
+                    <i class="mi mi-Settings mi-lg"></i>
+                </button>
+                <button type="button" class="btn toolbar bg-white shadow p-1" data-toggle="tooltip" data-placement="left" title="返回顶部" onclick="location.href = '#top'">
+                    <i class="mi mi-ChevronUp mi-lg"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
 
@@ -110,10 +134,14 @@
 
 
 <script>
-    function fix_the_nav() {
-        var target = document.documentElement.scrollTop - 60;
-        document.documentElement.scrollTop = target;
-    }
+    @*     function fix_the_nav() { *@
+    @*         var target = document.documentElement.scrollTop - 60; *@
+    @*         document.documentElement.scrollTop = target; *@
+    @*     } *@
+    // Tooltips Initialization
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 </script>
 @if (IsSectionDefined("Scripts"))
 {
