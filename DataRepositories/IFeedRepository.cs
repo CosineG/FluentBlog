@@ -14,6 +14,8 @@ namespace FluentBlog.DataRepositories
         bool Delete(int fid);
         // 改
         Feed Update(Feed feed);
+        // 用动态id查动态
+        Feed GetFeedById(int fid);
         // 查最新动态
         Feed GetLastFeed();
         // 查所有动态
@@ -21,6 +23,6 @@ namespace FluentBlog.DataRepositories
         // 查询动态总数
         int GetFeedsCount();
         // 增加浏览次数
-        Feed AddLikesCount(Feed feed);
+        Feed AddLikesCount(int fid);
     }
 }

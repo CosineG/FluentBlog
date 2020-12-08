@@ -14,11 +14,15 @@ namespace FluentBlog.DataRepositories
         Meta Delete(int id);
         // 改
         Meta Update(Meta updateMeta);
-        // 用slug查询类别
+        // 查询分类/标签数量
+        int GetMetaCount(int? type);
+        // 获得所有分类/标签以及其下的文章数目
+        Tuple<List<Meta>, List<int>> GetMetasAndCountIncluded(int? type);
+        // 用slug查询分类/标签
         Meta GetMetaBySlug(string slug);
-        // 查询类别下的文章数目
+        // 查询分类/标签下的文章数目
         int GetArchiveOfMetaCount(int mid);
-        // 获得类别下第几页的文章
+        // 获得分类/标签下第几页的文章
         public List<Archive> GetArchivesByMetaAndPage(int mid, int page, int archivesCountPerPage);
     }
 }

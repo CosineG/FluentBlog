@@ -1,3 +1,4 @@
+using System;
 using FluentBlog.Infrastructure;
 using FluentBlog.Models;
 using System.Collections.Generic;
@@ -47,20 +48,44 @@ namespace FluentBlog.DataRepositories
             return updateMeta;
         }
 
-        // 用slug查询类别
+        // 查询分类/标签数量
+        public int GetMetaCount(int? type)
+        {
+            return type switch
+            {
+                0 => _context.Metas.Count(m => m.Type == "category"),
+                1 => _context.Metas.Count(m => m.Type == "tag"),
+                _ => _context.Metas.Count()
+            };
+        }
+
+        // 获得所有分类/标签以及其下的文章数目
+        public Tuple<List<Meta>, List<int>> GetMetasAndCountIncluded(int? type)
+        {
+            List<Meta> metas = type switch
+            {
+                0 => _context.Metas.Where(m => m.Type == "category").ToList(),
+                1 => _context.Metas.Where(m => m.Type == "tag").ToList(),
+                _ => _context.Metas.ToList()
+            };
+            List<int> counts = metas.Select(meta => GetArchiveOfMetaCount(meta.Mid)).ToList();
+            return new Tuple<List<Meta>, List<int>>(metas, counts);
+        }
+
+        // 用slug查询分类/标签
         public Meta GetMetaBySlug(string slug)
         {
             return _context.Metas.FirstOrDefault(m => m.Slug.Equals(slug));
         }
 
-        // 查询类别下的文章数目
+        // 查询分类/标签下的文章数目
         public int GetArchiveOfMetaCount(int mid)
         {
             return _context.Relationships.Count(r => r.Mid.Equals(mid));
         }
 
 
-        // 根据页码取得类别下的文章
+        // 根据页码取得分类/标签下的文章
         public List<Archive> GetArchivesByMetaAndPage(int mid, int page, int archivesCountPerPage)
         {
             int skipNum = (page - 1) * archivesCountPerPage;

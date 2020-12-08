@@ -18,6 +18,7 @@ namespace FluentBlog.Controllers
             _settingRepository = settingRepository;
         }
 
+        // 读取博客设置
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var settings = _settingRepository.GetSettings();

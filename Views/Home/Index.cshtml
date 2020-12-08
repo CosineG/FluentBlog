@@ -8,6 +8,34 @@
         overflow: hidden;
     }
 </style>
+
+<!-- 显示当前选择的分类 -->
+@if (Model.CurrentMeta != null)
+{
+    <div>
+        <div class="card mb-4 shadow">
+            <div class="card-body">
+                @{
+                    string pageInfo = "";
+                    if (Model.PageNum != 1)
+                    {
+                        pageInfo = " - " + "第" + Model.PageNum + "页";
+                    }
+                    switch (Model.CurrentMeta.Type)
+                    {
+                        case "category":
+                            <h2 class="card-title font-weight-bold m-0">分类：@Model.CurrentMeta.Name@pageInfo</h2>
+                            break;
+                        case "tag":
+                            <h2 class="card-title font-weight-bold m-0">标签：@Model.CurrentMeta.Name@pageInfo</h2>
+                            break;
+                    }
+                }
+            </div>
+        </div>
+    </div>
+}
+
 @{
     for (int i = 0; i < Model.Archives.Count; i++)
     {
@@ -16,7 +44,7 @@
 
             <!--标题图-->
             <div class="view">
-                <a asp-controller="Archive" asp-action="Index" asp-route-aid="@Model.Archives[i].Aid">
+                <a asp-controller="Home" asp-action="Archive" asp-route-aid="@Model.Archives[i].Aid">
                     <img src=@Url.Content(Model.Archives[i].TitleImage) class="img-fluid card-img-top" alt="photo">
                 </a>
             </div>
@@ -24,8 +52,8 @@
             <!--主体-->
             <div class="card-body">
                 <!--标题-->
-                <h3 class="card-title font-weight-bold">
-                    <a id="title" class="text-dark text-decoration-none" asp-controller="Archive" asp-action="Index" asp-route-aid="@Model.Archives[i].Aid">@Model.Archives[i].Title</a>
+                <h3 class="card-title font-weight-bold m-0">
+                    <a id="title" class="text-dark text-decoration-none" asp-controller="Home" asp-action="Archive" asp-route-aid="@Model.Archives[i].Aid">@Model.Archives[i].Title</a>
                     @if (i == 0 && Model.PageNum == 1)
                     {
                         <span class="badge badge-success">New</span>
@@ -38,7 +66,7 @@
                         for (int j = 0; j < Model.Categories[i].Count; j++)
                         {
                             <span class="pl-0 pr-2 m-0">
-                                <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[j]" asp-controller="Home" asp-action="Meta" asp-route-slug="@Model.Categories[i][j].Slug">@Model.Categories[i][j].Name</a>
+                                <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[j%5]" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.Categories[i][j].Slug">@Model.Categories[i][j].Name</a>
                             </span>
                         }
                     }
@@ -58,7 +86,7 @@
                         }
                     }
                 </p>
-                <a class="text-primary" asp-controller="Archive" asp-action="Index" asp-route-aid="@Model.Archives[i].Aid">
+                <a class="card-link" asp-controller="Home" asp-action="Archive" asp-route-aid="@Model.Archives[i].Aid">
                     阅读全文
                     <i class="mi mi-ChevronRight"></i>
                 </a>
@@ -86,7 +114,7 @@
     <ul class="pagination justify-content-center">
         <!--首页-->
         <li class="page-item shadow">
-            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="">
+            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@(Model.CurrentMeta?.Slug)" asp-route-page="">
                 <span aria-hidden="true">
                     <i class="mi mi-ChevronLeft"></i> 首页
                 </span>
@@ -96,7 +124,7 @@
         @if (Model.PageNum != 1)
         {
             <li class="page-item shadow">
-                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageNum - 1)">@(Model.PageNum - 1)</a>
+                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@(Model.PageNum - 1)">@(Model.PageNum - 1)</a>
             </li>
         }
         <!--当前页-->
@@ -107,12 +135,12 @@
         @if (Model.PageNum != Model.PageCount)
         {
             <li class="page-item shadow">
-                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@(Model.PageNum + 1)">@(Model.PageNum + 1)</a>
+                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@(Model.PageNum + 1)">@(Model.PageNum + 1)</a>
             </li>
         }
         <!--末页-->
         <li class="page-item shadow">
-            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-page="@Model.PageCount" aria-label="Last">
+            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@Model.PageCount">
                 <span aria-hidden="true">
                     末页 <i class="mi mi-ChevronRight"></i>
                 </span>
@@ -120,6 +148,14 @@
         </li>
     </ul>
 </nav>
+
+@section SecondSidebar{
+    <!-- 动态栏 -->
+    @if (ViewBag.Settings["FeedSwitch"] == "on")
+    {
+        @await Component.InvokeAsync("FeedBlock")
+    }
+}
 
 @section Scripts{
     <script src="~/js/CustomScript.js"></script>

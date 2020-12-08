@@ -1,0 +1,110 @@
+@using FluentBlog.Models
+@model FluentBlog.ViewModels.FilingViewModel
+
+<style>
+    [data-toggle="collapse"].collapsed .mi:before { content: "\EAC6"; }
+
+    [data-toggle="collapse"] .mi:before { content: "\EAC0"; }
+</style>
+
+<div class="card mb-4 shadow">
+    <!--主体-->
+    <div class="card-body">
+        <div class="p-3">
+            <!--标题-->
+            <h2 class="card-title font-weight-bold mb-2 mt-3">
+                归档
+            </h2>
+            <p>当前博客共收录文章@(Model.Count.Item1)篇，分类@(Model.Count.Item2)个，标签@(Model.Count.Item3)个</p>
+        </div>
+        <hr>
+        <!--tab标签-->
+        <ul class="nav nav-tabs fluent-tabs px-3" role="tablist">
+            <!--文章-->
+            <li class="nav-item">
+                <a class="nav-link active" id="archive-tab" data-toggle="tab" href="#archive-tabpanel" aria-selected="true">文章</a>
+            </li>
+            <!--分类-->
+            <li class="nav-item">
+                <a class="nav-link" id="category-tab" data-toggle="tab" href="#category-tabpanel" aria-selected="false">分类</a>
+            </li>
+            <!--标签-->
+            <li class="nav-item">
+                <a class="nav-link" id="tag-tab" data-toggle="tab" href="#tag-tabpanel" aria-selected="false">标签</a>
+            </li>
+        </ul>
+        <!--tab内容-->
+        <div class="tab-content m-0 px-3 py-4">
+            <!--文章-->
+            <div class="tab-pane fade show active" id="archive-tabpanel">
+                <!--年份-->
+                @foreach (var archivesOfYear in Model.Archives)
+                {
+                    <div class="pb-3">
+                        <!--显示按钮-->
+                        <div>
+                            <a data-toggle="collapse" href="#@("year-" + archivesOfYear[0][0].Created.Year)">
+                                <h4>
+                                    <i class="mi"></i>
+                                    @archivesOfYear[0][0].Created.Year 年
+                                </h4>
+                            </a>
+                        </div>
+                        <!--隐藏内容（默认显示）-->
+                        <div class="collapse show" id="@("year-" + archivesOfYear[0][0].Created.Year)">
+                            <!--月份-->
+                            <div class="pl-4">
+                                @foreach (var archivesOfMonth in archivesOfYear)
+                                {
+                                    <div class="pb-2">
+                                        <!--显示按钮-->
+                                        <a data-toggle="collapse" href="#@("month-" + archivesOfMonth[0].Created.Year + "-" + @archivesOfMonth[0].Created.Month)">
+                                            <h5>
+                                                <i class="mi"></i>
+                                                @archivesOfMonth[0].Created.Month 月
+                                            </h5>
+                                        </a>
+                                        @foreach (var archive in archivesOfMonth)
+                                        {
+                                            <!--隐藏内容（默认显示）-->
+                                            <div class="collapse show" id="@("month-" + archivesOfMonth[0].Created.Year + "-" + @archivesOfMonth[0].Created.Month)">
+                                                <div class="pl-4">
+                                                    <!--文章标题-->
+                                                    <a class="text-dark text-decoration-none font-weight-normal" asp-controller="Home" asp-action="Archive" asp-route-aid="@archive.Aid">- @archive.Title</a>
+                                                    <!--文章浏览量和评论数-->
+                                                    <span class="d-md-block d-none float-right">
+                                                        <i class="mi mi-View"></i> @archive.Views
+                                                        -
+                                                        <i class="mi mi-Comment"></i> @archive.CommentsNum
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <!--分类-->
+            <div class="tab-pane fade" id="category-tabpanel">
+                @for (int i = 0; i < Model.Categories.Item1.Count; i++)
+                {
+                    <a class="btn @Model.CategoryColors[i % 5]" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.Categories.Item1[i].Slug">
+                        @Model.Categories.Item1[i].Name (@Model.Categories.Item2[i])
+                    </a>
+                }
+            </div>
+            <!--标签-->
+            <div class="tab-pane fade" id="tag-tabpanel">
+                @for (int i = 0; i < Model.Tags.Item1.Count; i++)
+                {
+                    <a class="p-2" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.Tags.Item1[i].Slug">
+                        #@Model.Tags.Item1[i].Name (@Model.Tags.Item2[i])
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

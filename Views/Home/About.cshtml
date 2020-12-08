@@ -1,0 +1,57 @@
+@using FluentBlog.Models
+@model FluentBlog.ViewModels.ArchiveViewModel
+
+<environment include="Development">
+    <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
+    <script src="~/lib/editor.md/editormd.js"></script>
+    <script src="~/lib/editor.md/lib/marked.min.js"></script>
+    <script src="~/lib/editor.md/lib/prettify.min.js"></script>
+</environment>
+
+<environment exclude="Development">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
+</environment>
+
+<div class="card mb-4 shadow">
+    <!--主体-->
+    <div class="card-body">
+        <div class="p-3">
+            <!--标题-->
+            <h2 class="card-title font-weight-bold mb-2 mt-3">
+                关于
+            </h2>
+        </div>
+        <hr>
+        <div id="description">
+            <!--加载动画-->
+            <div class="progress-cover progress-cover-primary" id="progress-cover">
+                <br/>
+                <br/>
+                <div class="progress progress-medium fluent-position">
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                    <span class="progress-span"></span>
+                </div>
+                <br/>
+                <br/>
+            </div>
+            <!--正文-->
+            <textarea style="display: none;">@Model.Archive.Text</textarea>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(function() {
+            var editormdView = editormd.markdownToHTML("description",{});
+            $('.progress-cover').css('display', 'none');
+        });
+    </script>
+}

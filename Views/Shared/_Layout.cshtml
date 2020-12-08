@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>@ViewBag.Title</title>
+    <title>@(ViewBag.Title+ViewBag.Settings["BlogName"])</title>
     <meta name="viewport" content="width=device-width"/>
     <link href="~/css/reset.css" rel="stylesheet"/>
     <environment include="Development">
@@ -26,7 +26,7 @@
     </environment>
 
     <link href="~/lib/FDBootstrap/css/fluent.css" rel="stylesheet"/>
-    <link href="~/lib/FDBootstrap/css/micon.min.css" rel="stylesheet"/>
+    <link href="~/lib/micon/css/micon.min.css" rel="stylesheet"/>
     <link href="~/css/site.css" rel="stylesheet" asp-append-version="true"/>
 
     <style>
@@ -37,12 +37,16 @@
             height: 60%;
         }
 
+        #content { min-height: 100vh; }
+
         #background { background-color: #FAF9F8; }
 
         .toolbar {
             width: 50px !important;
             height: 50px
         }
+
+        .mi:hover { margin-left: 0 !important; }
 
         .mi-lg {
             font-size: 1.33333333em !important;
@@ -52,7 +56,6 @@
     </style>
 
 </head>
-@* <body onhashchange="fix_the_nav();"> *@
 <body>
 <header id="top"></header>
 <div class="container-fluid m-0">
@@ -72,16 +75,20 @@
                 </div>
                 <!-- 按钮 -->
                 <div class="pt-2 p-4 border-top">
-                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Index" asp-route-page="">
-                        <i class="mi mi-Home "></i>
+                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Index" asp-route-slug="@null" asp-route-page="">
+                        <i class="mi mi-Home"></i>
                         首页
                     </a>
-                    <a type="button" class="btn btn-block bg-white ml-0">
+                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Filing">
+                        <i class="mi mi-Folder"></i>
+                        归档
+                    </a>
+                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Friend">
                         <i class="mi mi-Link"></i>
                         友链
                     </a>
-                    <a type="button" class="btn btn-block bg-white ml-0">
-                        <i class="mi mi-Contact"></i>
+                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="About">
+                        <i class="mi mi-Info"></i>
                         关于
                     </a>
                 </div>
@@ -95,21 +102,35 @@
                     <!-- 页尾 -->
                     <footer class="page-footer shadow">
                         <div class="footer-copyright bg-white text-dark text-center small py-3 ">
-                            © 2018 Copyright:
-                            <a href="https://mdbootstrap.com/bootstrap-tutorial/" class="text-dark"> MDBootstrap.com</a>
+                            <!-- 未设置则输出默认 -->
+                            @if (ViewBag.Settings.ContainsKey("Copyright") && ViewBag.Settings["Copyright"] != "")
+                            {
+                                @ViewBag.Settings["Copyright"]
+                            }
+                            else
+                            {
+                                @:© @DateTime.Now.Year.ToString() Copyright:
+                                <a href="@Url.Content("~/")" class="text-dark"> @ViewBag.Settings["BlogName"]</a>
+                            }
                         </div>
                     </footer>
 
                 </div>
                 <!-- 右侧边栏 -->
                 <div class="col-md-3 pt-4 px-0" id="second-sidebar">
-
-                    <!-- 动态栏 -->
-                    @if (ViewBag.Settings["FeedSwitch"] == "on")
+                    <!-- 公告栏 -->
+                    @if (ViewBag.Settings.ContainsKey("Notice") && ViewBag.Settings["Notice"] != "")
                     {
-                        @await Component.InvokeAsync("FeedBlock")
+                        <div class="card shadow p-3 mb-4">
+                            <div class="card-header bg-white px-1 py-2">
+                                <h5 class="font-weight-normal"><i class="mi mi-Sticker2"></i> 公告栏</h5>
+                            </div>
+                            <div class="card-body p-1">
+                                <p class="p-2 m-0 small">@ViewBag.Settings["Notice"]</p>
+                            </div>
+                        </div>
                     }
-
+                    <!-- 其他自定义栏位 -->
                     @if (IsSectionDefined("SecondSidebar"))
                     {
                         @await RenderSectionAsync("SecondSidebar", required: false)
@@ -117,30 +138,27 @@
                 </div>
             </div>
         </div>
+        <!-- 工具栏 -->
         <div class="col-md-1 d-md-block d-none fixed-bottom ml-auto">
             <div class="btn-group-vertical m-0">
+                <!-- 后台管理 -->
                 <button type="button" class="btn toolbar bg-white shadow p-1" data-toggle="tooltip" data-placement="left" title="后台管理">
                     <i class="mi mi-Settings mi-lg"></i>
                 </button>
+                <!-- 返回顶部 -->
                 <button type="button" class="btn toolbar bg-white shadow p-1" data-toggle="tooltip" data-placement="left" title="返回顶部" onclick="location.href = '#top'">
                     <i class="mi mi-ChevronUp mi-lg"></i>
                 </button>
             </div>
         </div>
     </div>
-
-
 </div>
 
 
 <script>
-    @*     function fix_the_nav() { *@
-    @*         var target = document.documentElement.scrollTop - 60; *@
-    @*         document.documentElement.scrollTop = target; *@
-    @*     } *@
-    // Tooltips Initialization
+    // 初始化Tooltip
     $(function() {
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip();
     })
 </script>
 @if (IsSectionDefined("Scripts"))

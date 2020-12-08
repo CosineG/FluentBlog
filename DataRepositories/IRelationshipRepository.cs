@@ -15,6 +15,6 @@ namespace FluentBlog.DataRepositories
         // 用文章id查分类id
         List<Archive> GetArchivesByMetaId(int mid);
         // 用分类id查文章id
-        List<Meta> GetMetasByArchiveId(int aid, string type ="");
+        List<Meta> GetMetasByArchiveId(int aid, int?type);
     }
 }

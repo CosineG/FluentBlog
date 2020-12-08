@@ -66,14 +66,17 @@ namespace FluentBlog.DataRepositories
         }
 
         // 用文章id查分类
-        public List<Meta> GetMetasByArchiveId(int aid, string type = "all")
+        public List<Meta> GetMetasByArchiveId(int aid, int?type)
         {
             List<int> metaIdList = _context.Relationships.Where(r => r.Aid.Equals(aid)).Select(r => r.Mid).ToList();
             return type switch
             {
-                "category" => metaIdList.Select(mid => _context.Metas.Find(mid))
+                // 分类
+                0 => metaIdList.Select(mid => _context.Metas.Find(mid))
                     .Where(m => m.Type.Equals("category")).ToList(),
-                "tag" => metaIdList.Select(mid => _context.Metas.Find(mid)).Where(m => m.Type.Equals("tag")).ToList(),
+                // 标签
+                1 => metaIdList.Select(mid => _context.Metas.Find(mid)).Where(m => m.Type.Equals("tag")).ToList(),
+                // 全部
                 _ => metaIdList.Select(mid => _context.Metas.Find(mid)).ToList()
             };
         }

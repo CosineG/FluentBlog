@@ -45,6 +45,11 @@ namespace FluentBlog.Infrastructure
                 },
                 new Setting
                 {
+                    Name = "Notice",
+                    Value = "欢迎使用Fluent Blog，一个基于ASP.NET Core 3.1的MVC博客框架。"
+                },
+                new Setting
+                {
                     Name = "ArchivesCountPerPage",
                     Value = "5"
                 },
@@ -52,6 +57,21 @@ namespace FluentBlog.Infrastructure
                 {
                     Name = "FeedSwitch",
                     Value = "on"
+                },
+                new Setting
+                {
+                    Name = "DonateSwitch",
+                    Value = "on"
+                },
+                new Setting
+                {
+                    Name = "DonateAlipay",
+                    Value = ""
+                },
+                new Setting
+                {
+                    Name = "DonateWechat",
+                    Value = ""
                 }
             );
         }

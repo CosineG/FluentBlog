@@ -45,6 +45,12 @@ namespace FluentBlog.DataRepositories
             return updateFeed;
         }
 
+        // 用动态id查动态
+        public Feed GetFeedById(int fid)
+        {
+            return _context.Feeds.Find(fid);
+        }
+
         // 查最新动态
         public Feed GetLastFeed()
         {
@@ -64,8 +70,10 @@ namespace FluentBlog.DataRepositories
         }
 
         // 增加点赞数
-        public Feed AddLikesCount(Feed feed)
+        public Feed AddLikesCount(int fid)
         {
+            Console.WriteLine(fid);
+            Feed feed = GetFeedById(fid);
             feed.Likes += 1;
             Update(feed);
             return feed;

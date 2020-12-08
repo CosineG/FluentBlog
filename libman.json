@@ -19,6 +19,11 @@
       "provider": "jsdelivr",
       "library": "editor.md@1.5.0",
       "destination": "wwwroot/lib/editor.md/"
+    },
+    {
+      "provider": "filesystem",
+      "library": "wwwroot/lib/micon/",
+      "destination": "wwwroot/lib/micon/"
     }
   ]
 }

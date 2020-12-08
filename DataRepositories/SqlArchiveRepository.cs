@@ -62,7 +62,11 @@ namespace FluentBlog.DataRepositories
         {
             return _context.Archives.Count();
         }
-
+        // 获得所有文章
+        public List<Archive> GetAllArchives()
+        {
+            return _context.Archives.OrderByDescending(a => a.Created).ToList();
+        }
         // 根据页码取得文章
         public List<Archive> GetArchivesByPage(int page, int archivesCountPerPage)
         {
