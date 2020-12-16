@@ -1,0 +1,79 @@
+@using FluentBlog.Models
+@model FluentBlog.ViewModels.FriendViewModel
+@{
+    Random random = new Random();
+}
+
+@section HeadScripts{
+    <environment include="Development">
+        <script src="~/lib/clamp-js/clamp.min.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <script src="https://cdn.jsdelivr.net/npm/clamp-js@0.7.0/clamp.min.js"></script>
+    </environment>
+}    
+
+<style>
+    .friend-introduce {
+        height: 50px;
+    }
+</style>
+
+<div class="card mb-4 shadow">
+    <!--主体-->
+    <div class="card-body">
+        <div class="p-3">
+            <!--标题-->
+            <h2 class="card-title font-weight-bold mb-2 mt-3">
+                友情链接
+            </h2>
+            <p>当前博客共拥有友链@(Model.FriendsCount)个</p>
+        </div>
+        <hr>
+        <div class="row m-0 px-3 py-4">
+            @foreach (var friend in Model.Friends)
+            {
+                int colorIndex = random.Next(Model.Colors.Count);
+                <div class="col-sm-6 col-md-4">
+                    <div class="card mb-4 shadow">
+                        <div class="py-2 w-100 @Model.Colors[colorIndex]"></div>
+                        <div class="position-relative h-100">
+                            <div class="h-50 w-100 @Model.Colors[colorIndex] position-absolute text-white text-center">
+                            </div>
+                            <!-- Card image -->
+                            <div class="w-50 mx-auto position-relative">
+                                <a href="@friend.Url" target="_blank">
+                                    <img class="card-img-top rounded-circle" src="@friend.Avatar">
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Card body -->
+                        <div class="card-body text-center p-1">
+                            <a href="@friend.Url" target="_blank">
+                                <h5 class="card-title friend-name pt-1 pb-0 mb-1">@friend.Name</h5>
+                            </a>
+                            <!-- Text -->
+                            <p class="card-text friend-introduce p-1 mb-2">
+                                @friend.Introduce
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section BottomScripts{
+    <script type="text/javascript">
+        $(function() {
+            $('.friend-introduce').each(function() {
+                $clamp(this, { clamp: 'auto' });
+            });
+            $('.friend-name').each(function () {
+                $clamp(this, { clamp: '1' });
+            });
+        });
+    </script>
+}

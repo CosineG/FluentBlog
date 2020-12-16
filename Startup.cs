@@ -29,8 +29,9 @@ namespace FluentBlog
         public void ConfigureServices(IServiceCollection services)
         {
             // 连接Mysql数据库
+            string connectionString = _configuration.GetConnectionString("DBConnection");
             services.AddDbContextPool<AppDbContext>(options =>
-                options.UseMySql(_configuration.GetConnectionString("DBConnection")));
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
             // 注册用户时的密码要求
             services.Configure<IdentityOptions>(options =>
             {
@@ -51,6 +52,7 @@ namespace FluentBlog
             services.AddScoped<IMetaRepository, SqlMetaRepository>();
             services.AddScoped<IArchiveRepository, SqlArchiveRepository>();
             services.AddScoped<IFeedRepository, SqlFeedRepository>();
+            services.AddScoped<IFriendRepository, SqlFriendRepository>();
             services.AddScoped<IRelationshipRepository, SqlRelationshipRepository>();
             services.AddScoped<ISettingRepository, SqlSettingRepository>();
         }

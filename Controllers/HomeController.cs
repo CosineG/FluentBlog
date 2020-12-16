@@ -20,11 +20,12 @@ namespace FluentBlog.Controllers
         private readonly ISettingRepository _settingRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFeedRepository _feedRepository;
+        private readonly IFriendRepository _friendRepository;
 
         public HomeController(IRelationshipRepository relationshipRepository, IMetaRepository metaRepository,
             IArchiveRepository archiveRepository, CustomUserManager customUserManager,
             ISettingRepository settingRepository, IHttpContextAccessor httpContextAccessor,
-            IFeedRepository feedRepository) : base(settingRepository)
+            IFeedRepository feedRepository, IFriendRepository friendRepository) : base(settingRepository)
         {
             _metaRepository = metaRepository;
             _relationshipRepository = relationshipRepository;
@@ -33,6 +34,7 @@ namespace FluentBlog.Controllers
             _settingRepository = settingRepository;
             _httpContextAccessor = httpContextAccessor;
             _feedRepository = feedRepository;
+            _friendRepository = friendRepository;
         }
 
         // 首页
@@ -257,7 +259,14 @@ namespace FluentBlog.Controllers
         [Route("/friend")]
         public ViewResult Friend()
         {
-            return View();
+            int friendsCount = _friendRepository.GetFriendsCount();
+            List<Friend> friends = _friendRepository.GetAllFriends();
+            FriendViewModel friendViewModel = new FriendViewModel
+            {
+                FriendsCount = friendsCount,
+                Friends = friends
+            };
+            return View(friendViewModel);
         }
 
         // 关于

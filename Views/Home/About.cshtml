@@ -1,19 +1,28 @@
 @using FluentBlog.Models
 @model FluentBlog.ViewModels.ArchiveViewModel
 
-<environment include="Development">
-    <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
-    <script src="~/lib/editor.md/editormd.js"></script>
-    <script src="~/lib/editor.md/lib/marked.min.js"></script>
-    <script src="~/lib/editor.md/lib/prettify.min.js"></script>
-</environment>
+@section HeadScripts{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
+        <script src="~/lib/editor.md/editormd.js"></script>
+        <script src="~/lib/editor.md/lib/marked.min.js"></script>
+        <script src="~/lib/editor.md/lib/prettify.min.js"></script>
+    </environment>
 
-<environment exclude="Development">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
-    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
-</environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
+    </environment>
+}
+
+
+<style>
+    .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+        font-weight: bold !important;
+    }
+</style>
 
 <div class="card mb-4 shadow">
     <!--主体-->
@@ -25,11 +34,12 @@
             </h2>
         </div>
         <hr>
-        <div id="description">
+        <!--正文-->
+        <div id="description" class="font-weight-normal">
             <!--加载动画-->
             <div class="progress-cover progress-cover-primary" id="progress-cover">
-                <br/>
-                <br/>
+                <br />
+                <br />
                 <div class="progress progress-medium fluent-position">
                     <span class="progress-span"></span>
                     <span class="progress-span"></span>
@@ -38,8 +48,8 @@
                     <span class="progress-span"></span>
                     <span class="progress-span"></span>
                 </div>
-                <br/>
-                <br/>
+                <br />
+                <br />
             </div>
             <!--正文-->
             <textarea style="display: none;">@Model.Archive.Text</textarea>
@@ -47,7 +57,7 @@
     </div>
 </div>
 
-@section Scripts{
+@section BottomScripts{
     <script type="text/javascript">
         $(function() {
             var editormdView = editormd.markdownToHTML("description",{});

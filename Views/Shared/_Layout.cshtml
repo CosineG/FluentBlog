@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>@(ViewBag.Title+ViewBag.Settings["BlogName"])</title>
+    <title>@(ViewBag.Title + ViewBag.Settings["BlogName"])</title>
     <meta name="viewport" content="width=device-width"/>
     <link href="~/css/reset.css" rel="stylesheet"/>
     <environment include="Development">
@@ -28,6 +28,11 @@
     <link href="~/lib/FDBootstrap/css/fluent.css" rel="stylesheet"/>
     <link href="~/lib/micon/css/micon.min.css" rel="stylesheet"/>
     <link href="~/css/site.css" rel="stylesheet" asp-append-version="true"/>
+
+    @if (IsSectionDefined("HeadScripts"))
+    {
+        @await RenderSectionAsync("HeadScripts", required: false)
+    }
 
     <style>
         #sidebar { top: 8rem; }
@@ -114,10 +119,9 @@
                             }
                         </div>
                     </footer>
-
                 </div>
                 <!-- 右侧边栏 -->
-                <div class="col-md-3 pt-4 px-0" id="second-sidebar">
+                <div class="col-md-3 pt-4 px-4 px-md-0" id="second-sidebar">
                     <!-- 公告栏 -->
                     @if (ViewBag.Settings.ContainsKey("Notice") && ViewBag.Settings["Notice"] != "")
                     {
@@ -154,16 +158,16 @@
     </div>
 </div>
 
-
 <script>
     // 初始化Tooltip
     $(function() {
         $('[data-toggle="tooltip"]').tooltip();
     })
 </script>
-@if (IsSectionDefined("Scripts"))
+
+@if (IsSectionDefined("BottomScripts"))
 {
-    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("BottomScripts", required: false)
 }
 </body>
 </html>

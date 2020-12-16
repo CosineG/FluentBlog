@@ -1,18 +1,22 @@
 @using FluentBlog.Models
 @model FluentBlog.ViewModels.ArchiveViewModel
-<environment include="Development">
-    <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
-    <script src="~/lib/editor.md/editormd.js"></script>
-    <script src="~/lib/editor.md/lib/marked.min.js"></script>
-    <script src="~/lib/editor.md/lib/prettify.min.js"></script>
-</environment>
 
-<environment exclude="Development">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
-    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
-</environment>
+@section HeadScripts{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
+        <script src="~/lib/editor.md/editormd.js"></script>
+        <script src="~/lib/editor.md/lib/marked.min.js"></script>
+        <script src="~/lib/editor.md/lib/prettify.min.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
+    </environment>
+}
+
 
 <style>
     .donate-qrcode {
@@ -20,6 +24,8 @@
         max-width: 300px;
         height: auto;
     }
+
+    .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 { font-weight: bold !important; }
 </style>
 
 <div class="view">
@@ -41,7 +47,7 @@
                 for (int i = 0; i < Model.Categories.Count; i++)
                 {
                     <span class="pl-0 pr-2 m-0">
-                        <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[i%5]" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.Categories[i].Slug">@Model.Categories[i].Name</a>
+                        <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[i % 5]" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.Categories[i].Slug">@Model.Categories[i].Name</a>
                     </span>
                 }
             }
@@ -64,11 +70,12 @@
         </div>
         <hr>
 
-        <div id="description">
+        <!--正文-->
+        <div id="description" class="font-weight-normal">
             <!--加载动画-->
             <div class="progress-cover progress-cover-primary" id="progress-cover">
-                <br />
-                <br />
+                <br/>
+                <br/>
                 <div class="progress progress-medium fluent-position">
                     <span class="progress-span"></span>
                     <span class="progress-span"></span>
@@ -77,40 +84,40 @@
                     <span class="progress-span"></span>
                     <span class="progress-span"></span>
                 </div>
-                <br />
-                <br />
+                <br/>
+                <br/>
             </div>
             <!--正文-->
-            <textarea style="display: none;">@Model.Archive.Text</textarea>
+            <textarea class="d-none">@Model.Archive.Text</textarea>
 
         </div>
         <!-- 文章页尾 -->
         <div class="card-footer bg-transparent justify-content-around">
             <!-- 打赏 -->
-            @if (ViewBag.Settings.ContainsKey("DonateSwitch") && ViewBag.Settings["DonateSwitch"] != "")
+            @if (ViewBag.Settings["DonateSwitch"] == "on")
             {
-            }
-            <div class="text-center">
-                <a class="btn btn-primary" data-toggle="collapse" href="#donate">
-                    <i class="mi mi-PaymentCard"></i> 打赏
-                </a>
-            </div>
-            <div class="collapse" id="donate">
-                <div class="m-3 row text-center">
-                    @if (ViewBag.Settings["DonateAlipay"] != "")
-                    {
-                        <div class="col-md text-center">
-                            <img class="donate-qrcode" src="@ViewBag.Settings["DonateAlipay"]" alt="支付宝"/>
-                        </div>
-                    }
-                    @if (ViewBag.Settings["DonateWechat"] != "")
-                    {
-                        <div class="col-md text-center">
-                            <img class="donate-qrcode" src="@ViewBag.Settings["DonateWechat"]" alt="微信"/>
-                        </div>
-                    }
+                <div class="text-center">
+                    <a class="btn btn-primary" data-toggle="collapse" href="#donate">
+                        <i class="mi mi-PaymentCard"></i> 赞赏
+                    </a>
                 </div>
-            </div>
+                <div class="collapse" id="donate">
+                    <div class="m-3 row text-center">
+                        @if (ViewBag.Settings["DonateAlipay"] != "")
+                        {
+                            <div class="col-md text-center">
+                                <img class="donate-qrcode" src="@ViewBag.Settings["DonateAlipay"]" alt="支付宝"/>
+                            </div>
+                        }
+                        @if (ViewBag.Settings["DonateWechat"] != "")
+                        {
+                            <div class="col-md text-center">
+                                <img class="donate-qrcode" src="@ViewBag.Settings["DonateWechat"]" alt="微信"/>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
             <!-- 版权说明 -->
             <p class="py-2">
                 版权说明：若无另外注明，博客中文章皆为原创，转载请保留文章出处<br>
@@ -162,7 +169,7 @@
     }
 }
 
-@section Scripts{
+@section BottomScripts{
     <script type="text/javascript">
         $(function() {
             var editormdView = editormd.markdownToHTML("description",
@@ -172,7 +179,7 @@
                     tocContainer: "#toc-container",
                     tocDropdown: false
                 });
-            $('.progress-cover').css('display', 'none');
+            $('.progress-cover').addClass('d-none');
         });
     </script>
 }

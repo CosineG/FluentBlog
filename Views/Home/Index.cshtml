@@ -1,5 +1,16 @@
 @using FluentBlog.Models
 @model FluentBlog.ViewModels.HomeViewModel
+
+@section HeadScripts{
+    <environment include="Development">
+        <script src="~/lib/clamp-js/clamp.min.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <script src="https://cdn.jsdelivr.net/npm/clamp-js@0.7.0/clamp.min.js"></script>
+    </environment>
+}
+
 <style>
     .view {
         width: 100%;
@@ -66,25 +77,15 @@
                         for (int j = 0; j < Model.Categories[i].Count; j++)
                         {
                             <span class="pl-0 pr-2 m-0">
-                                <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[j%5]" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.Categories[i][j].Slug">@Model.Categories[i][j].Name</a>
+                                <a class="btn btn-sm m-0 py-0 @Model.CategoryColors[j % 5]" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.Categories[i][j].Slug">@Model.Categories[i][j].Name</a>
                             </span>
                         }
                     }
                 </div>
 
-
                 <!--概要-->
-                <p class="card-text">
-                    @{
-                        if (Model.Archives[i].Text.Length > 300)
-                        {
-                            @(Model.Archives[i].Text.Substring(0, 300) + "…")
-                        }
-                        else
-                        {
-                            @Model.Archives[i].Text
-                        }
-                    }
+                <p class="card-text archive-content d-none">
+                    @Model.Archives[i].Text
                 </p>
                 <a class="card-link" asp-controller="Home" asp-action="Archive" asp-route-aid="@Model.Archives[i].Aid">
                     阅读全文
@@ -157,6 +158,13 @@
     }
 }
 
-@section Scripts{
-    <script src="~/js/CustomScript.js"></script>
+@section BottomScripts{
+    <script type="text/javascript">
+        $(function() {
+            $('.archive-content').each(function() {
+                $clamp(this, { clamp: '5' });
+            });
+            $('.archive-content').removeClass('d-none');
+        });
+    </script>
 }

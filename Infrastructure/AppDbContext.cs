@@ -23,6 +23,8 @@ namespace FluentBlog.Infrastructure
         public DbSet<File> Files { get; set; }
         // 设置
         public DbSet<Setting> Settings { get; set; }
+        // 友链
+        public DbSet<Friend> Friends { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

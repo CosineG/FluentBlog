@@ -24,6 +24,17 @@
       "provider": "filesystem",
       "library": "wwwroot/lib/micon/",
       "destination": "wwwroot/lib/micon/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "clamp-js@0.7.0",
+      "destination": "wwwroot/lib/clamp-js/",
+      "files": [
+        "clamp.js",
+        "clamp.min.js",
+        "package.json",
+        "README.markdown"
+      ]
     }
   ]
 }
