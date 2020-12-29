@@ -35,6 +35,11 @@
         "package.json",
         "README.markdown"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "colorthief@2.3.2",
+      "destination": "wwwroot/lib/colorthief/"
     }
   ]
 }

@@ -1,9 +1,6 @@
 @model FluentBlog.ViewModels.FeedViewModel
-<head>
-    <title>jquery纵向时间轴插件_Bootstrap响应两侧时间轴特效代码Timeline</title>
-
-    <link rel="stylesheet" type="text/css" href="css/timeline.css"/>
-</head>
+@{ bool isLeft = false; }
+<link rel="stylesheet" type="text/css" href="css/timeline.css"/>
 
 
 <div class="card mb-4 shadow">
@@ -22,13 +19,14 @@
                 {
                     if (i == 0 || Model.Feeds[i].Created.ToString("y") != Model.Feeds[i - 1].Created.ToString("y"))
                     {
+                        isLeft = !isLeft;
                         <dt class="bg-gray">@Model.Feeds[i].Created.ToString("y")</dt>
                     }
-                    <dd class="@(i % 2 == 0 ? "pos-left" : "pos-right") clearfix pt-3">
+                    <dd class="@(isLeft ? "pos-left" : "pos-right") clearfix pt-3">
                         <div class="circ bg-primary"></div>
                         <div class="time text-primary">
                             @Model.Feeds[i].Created.ToString("d日")
-                            <br />
+                            <br/>
                             @Model.Feeds[i].Created.ToString("dddd")
                         </div>
                         <div class="events card bg-white" style="width: 47%">
@@ -47,16 +45,16 @@
                                         <!-- 点赞 -->
                                         @if (Model.LikedList[i])
                                         {
-                                            <a class="text-muted text-primary small" id="@("likes-"+Model.Feeds[i].Fid)">
-                                                <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="已赞" id="@("likesIcon-"+Model.Feeds[i].Fid)"></i>
-                                                <span id="@("likesCount-"+Model.Feeds[i].Fid)">@Model.Feeds[i].Likes</span>
+                                            <a class="text-muted text-primary small" id="@("likes-" + Model.Feeds[i].Fid)">
+                                                <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="已赞" id="@("likesIcon-" + Model.Feeds[i].Fid)"></i>
+                                                <span id="@("likesCount-" + Model.Feeds[i].Fid)">@Model.Feeds[i].Likes</span>
                                             </a>
                                         }
                                         else
                                         {
-                                            <a class="text-muted small" onclick="addLikesCount(@Model.Feeds[i].Fid)" href="#" id="@("likes-"+Model.Feeds[i].Fid)">
-                                                <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="赞" id="@("likesIcon-"+Model.Feeds[i].Fid)"></i>
-                                                <span id="@("likesCount-"+Model.Feeds[i].Fid)">@Model.Feeds[i].Likes</span>
+                                            <a class="text-muted small" onclick="addLikesCount(@Model.Feeds[i].Fid)" href="#" id="@("likes-" + Model.Feeds[i].Fid)">
+                                                <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="赞" id="@("likesIcon-" + Model.Feeds[i].Fid)"></i>
+                                                <span id="@("likesCount-" + Model.Feeds[i].Fid)">@Model.Feeds[i].Likes</span>
                                             </a>
                                         }
                                     </div>

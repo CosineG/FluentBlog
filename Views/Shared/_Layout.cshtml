@@ -68,6 +68,10 @@
             background-color: #8f8f8f !important;
             border-color: #8f8f8f !important;
         }
+
+        .square{
+            border-radius: 0;
+            }
     </style>
 
 </head>
@@ -76,6 +80,12 @@
 <div class="container-fluid m-0">
     <!-- 主体 -->
     <div class="row" id="background">
+        <!-- 页首（小屏） -->
+        <div class="col-12 d-md-none d-block p-0">
+            <div class="bg-white text-dark text-center shadow p-3">
+                <h4 class="font-weight-bold m-0">@ViewBag.Settings["BlogName"]</h4>
+            </div>
+        </div>
         <!-- 侧边栏 -->
         <div class="offset-1 col-md-2 d-md-block d-none px-0 bg-white shadow">
             <div class="nav sticky-top flex-column" id="sidebar">
@@ -90,19 +100,19 @@
                 </div>
                 <!-- 按钮 -->
                 <div class="py-4 border-top">
-                    <a class="btn btn-block mx-0 shadow-none nav-btn" asp-controller="Home" asp-action="Index" asp-route-slug="@null" asp-route-page="">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn square" asp-controller="Home" asp-action="Index" asp-route-slug="@null" asp-route-page="">
                         <i class="mi mi-Home"></i>
                         首页
                     </a>
-                    <a class="btn btn-block mx-0 shadow-none nav-btn" asp-controller="Home" asp-action="Filing">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn square" asp-controller="Home" asp-action="Filing">
                         <i class="mi mi-Folder"></i>
                         归档
                     </a>
-                    <a class="btn btn-block mx-0 shadow-none nav-btn" asp-controller="Home" asp-action="Friend">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn square" asp-controller="Home" asp-action="Friend">
                         <i class="mi mi-Link"></i>
                         友链
                     </a>
-                    <a class="btn btn-block mx-0 shadow-none nav-btn" asp-controller="Home" asp-action="About">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn square" asp-controller="Home" asp-action="About">
                         <i class="mi mi-Info"></i>
                         关于
                     </a>
