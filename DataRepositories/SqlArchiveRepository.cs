@@ -38,8 +38,7 @@ namespace FluentBlog.DataRepositories
             if (archive == null) return false;
             _context.Archives.Remove(archive);
             int state = _context.SaveChanges();
-            _relationshipRepository.Delete(aid: aid);
-            return state > 0;
+            return state > 0 && _relationshipRepository.Delete(aid: aid);
         }
 
         // 改
@@ -62,11 +61,13 @@ namespace FluentBlog.DataRepositories
         {
             return _context.Archives.Count();
         }
+
         // 获得所有文章
         public List<Archive> GetAllArchives()
         {
             return _context.Archives.OrderByDescending(a => a.Created).ToList();
         }
+
         // 根据页码取得文章
         public List<Archive> GetArchivesByPage(int page, int archivesCountPerPage)
         {
@@ -74,11 +75,10 @@ namespace FluentBlog.DataRepositories
             int archivesNum = GetArchivesCount();
             if (archivesNum < archivesCountPerPage)
             {
-                return _context.Archives.OrderByDescending(a => a.Aid).ToList();
+                return GetAllArchives();
             }
 
-            return _context.Archives.OrderByDescending(a => a.Aid).Skip(skipNum).Take(archivesCountPerPage)
-                .ToList();
+            return GetAllArchives().Skip(skipNum).Take(archivesCountPerPage).ToList();
         }
 
         // 取得网站自带的默认标题头图

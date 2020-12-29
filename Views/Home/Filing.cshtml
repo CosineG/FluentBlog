@@ -2,9 +2,13 @@
 @model FluentBlog.ViewModels.FilingViewModel
 
 <style>
-    [data-toggle="collapse"].collapsed .mi:before { content: "\EAC6"; }
+    [data-toggle="collapse"].collapsed .mi:before {
+        content: "\EAC6";
+    }
 
-    [data-toggle="collapse"] .mi:before { content: "\EAC0"; }
+    [data-toggle="collapse"] .mi:before {
+        content: "\EAC0";
+    }
 </style>
 
 <div class="card mb-4 shadow">
@@ -108,3 +112,11 @@
         </div>
     </div>
 </div>
+
+@section SecondSidebar{
+    <!-- 动态栏 -->
+    @if (ViewBag.Settings["FeedSwitch"] == "on")
+    {
+        @await Component.InvokeAsync("FeedBlock")
+    }
+}

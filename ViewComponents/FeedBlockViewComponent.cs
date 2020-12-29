@@ -26,19 +26,32 @@ namespace FluentBlog.ViewComponents
         {
             List<Feed> feeds = new List<Feed>();
             List<User> authors = new List<User>();
+            List<bool> likedList = new List<bool>();
             var lastFeed = _feedRepository.GetLastFeed();
             if (lastFeed == null)
             {
                 return Content("");
             }
+
+            bool liked;
+            try
+            {
+                liked = Convert.ToBoolean(HttpContext.Session.GetString("LikeFeed" + lastFeed.Fid));
+            }
+            catch (FormatException)
+            {
+                liked = false;
+            }
+            likedList.Add(liked);
             feeds.Add(lastFeed);
             authors.Add(_customUserManager.GetUserById(lastFeed.Uid));
-            FeedViewModel homeViewModel = new FeedViewModel
+            FeedViewModel feedViewModel = new FeedViewModel
             {
+                LikedList = likedList,
                 Feeds = feeds,
                 Authors = authors
             };
-            return View(homeViewModel);
+            return View(feedViewModel);
         }
     }
 }

@@ -1,0 +1,30 @@
+@model FluentBlog.ViewModels.ContactViewModel
+<style>
+    .mi-2x { font-size: 2em !important }
+</style>
+
+<!-- 联系方式 -->
+@if (Model.Contacts.Count != 0)
+{
+    <div class="card shadow p-3 mb-4">
+        <div class="card-header bg-white px-1 py-2">
+            <h5 class="font-weight-normal"><i class="mi mi-AddFriend"></i> 联系方式</h5>
+        </div>
+        <div class="card-body p-1">
+            @foreach (var contact in Model.Contacts)
+            {
+                <div class="media m-2">
+                    <!-- 图标 -->
+                    <a class="align-self-center mr-3 text-dark text-decoration-none" height="40px" width="40px" href="@contact["Link"]">
+                        <i class="mi mi-2x @contact["Icon"]"></i>
+                    </a>
+                    <!-- 联系方式 -->
+                    <a class="media-body text-dark text-decoration-none text-truncate" href="@contact["Link"]">
+                        <h6 class="font-weight-bold m-0">@contact["Title"]</h6>
+                        <p class="m-0 small">@contact["Text"]</p>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+}

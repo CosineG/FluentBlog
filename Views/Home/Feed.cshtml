@@ -1,0 +1,98 @@
+@model FluentBlog.ViewModels.FeedViewModel
+<head>
+    <title>jquery纵向时间轴插件_Bootstrap响应两侧时间轴特效代码Timeline</title>
+
+    <link rel="stylesheet" type="text/css" href="css/timeline.css"/>
+</head>
+
+
+<div class="card mb-4 shadow">
+    <div class="card-body">
+        <div class="p-3">
+            <!--标题-->
+            <h2 class="card-title font-weight-bold mb-2 mt-3">
+                动态
+            </h2>
+            <p>当前博客共收录动态@(Model.FeedsCount)条</p>
+        </div>
+        <hr>
+        <div class="VivaTimeline">
+            <dl>
+                @for (int i = 0; i < Model.Feeds.Count; i++)
+                {
+                    if (i == 0 || Model.Feeds[i].Created.ToString("y") != Model.Feeds[i - 1].Created.ToString("y"))
+                    {
+                        <dt class="bg-gray">@Model.Feeds[i].Created.ToString("y")</dt>
+                    }
+                    <dd class="@(i % 2 == 0 ? "pos-left" : "pos-right") clearfix pt-3">
+                        <div class="circ bg-primary"></div>
+                        <div class="time text-primary">
+                            @Model.Feeds[i].Created.ToString("d日")
+                            <br />
+                            @Model.Feeds[i].Created.ToString("dddd")
+                        </div>
+                        <div class="events card bg-white" style="width: 47%">
+                            <div class="card-body p-1 p-sm-3">
+                                <blockquote class="blockquote p-1 p-sm-2 mt-2">
+                                    <!-- 博主 -->
+                                    <h6 class="font-weight-bold">@@@Model.Authors[i].DisplayName：</h6>
+                                    <!-- 动态内容 -->
+                                    <p class="mb-1 small">@Model.Feeds[i].Text</p>
+                                    <div class="float-right">
+                                        <!-- 时间 -->
+                                        <span class="text-muted small d-none d-sm-inline">
+                                            <i class="mi mi-ClockLegacy small" data-toggle="tooltip" data-placement="top" title="发布时间"></i> @Model.Feeds[0].Created.ToString("T")
+                                        </span>
+                                        &nbsp;
+                                        <!-- 点赞 -->
+                                        @if (Model.LikedList[i])
+                                        {
+                                            <a class="text-muted text-primary small" id="@("likes-"+Model.Feeds[i].Fid)">
+                                                <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="已赞" id="@("likesIcon-"+Model.Feeds[i].Fid)"></i>
+                                                <span id="@("likesCount-"+Model.Feeds[i].Fid)">@Model.Feeds[i].Likes</span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a class="text-muted small" onclick="addLikesCount(@Model.Feeds[i].Fid)" href="#" id="@("likes-"+Model.Feeds[i].Fid)">
+                                                <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="赞" id="@("likesIcon-"+Model.Feeds[i].Fid)"></i>
+                                                <span id="@("likesCount-"+Model.Feeds[i].Fid)">@Model.Feeds[i].Likes</span>
+                                            </a>
+                                        }
+                                    </div>
+                                </blockquote>
+                            </div>
+                        </div>
+                    </dd>
+                }
+                <dt class="bg-gray">……</dt>
+            </dl>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="js/timeline.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.VivaTimeline').vivaTimeline({
+            carousel: true,
+            carouselTime: 3000
+        });
+    });
+
+    function addLikesCount(fid) {
+        $.ajax({
+            url: '@Url.Action("AddFeedLikesCount", "Home")',
+            type: 'GET',
+            dataType: 'json',
+            cache: false,
+            data: { fid: fid },
+            success: function(feed) {
+                $(`#likes-${fid}`).addClass("text-primary");
+                $(`#likes-${fid}`).removeAttr("href");
+                $(`#likes-${fid}`).removeAttr("onclick");
+                $(`#likesIcon-${fid}`).attr("data-original-title", "已赞");
+                $(`#likesCount-${fid}`).text(feed["likes"]);
+            }
+        });
+    }
+</script>

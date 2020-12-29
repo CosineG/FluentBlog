@@ -60,7 +60,7 @@ namespace FluentBlog.DataRepositories
         // 查所有动态
         public List<Feed> GetAllFeeds()
         {
-            return _context.Feeds.ToList();
+            return _context.Feeds.OrderByDescending(f => f.Created).ToList();
         }
 
         // 查询动态总数

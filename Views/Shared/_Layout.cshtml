@@ -5,6 +5,7 @@
     <title>@(ViewBag.Title + ViewBag.Settings["BlogName"])</title>
     <meta name="viewport" content="width=device-width"/>
     <link href="~/css/reset.css" rel="stylesheet"/>
+
     <environment include="Development">
         <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet"/>
         <script src="~/lib/jquery/jquery.js"></script>
@@ -42,7 +43,9 @@
             height: 60%;
         }
 
-        #content { min-height: 100vh; }
+        @@media screen and (min-device-width: 768px) {
+            #content { min-height: 100vh; }
+        }
 
         #background { background-color: #FAF9F8; }
 
@@ -58,6 +61,13 @@
             line-height: 0.75em !important;
             vertical-align: -30% !important
         }
+
+        .text-white { color: #fff !important; }
+
+        .bg-gray {
+            background-color: #8f8f8f !important;
+            border-color: #8f8f8f !important;
+        }
     </style>
 
 </head>
@@ -67,7 +77,7 @@
     <!-- 主体 -->
     <div class="row" id="background">
         <!-- 侧边栏 -->
-        <div class="offset-1 col-md-2 d-md-block d-none bg-white shadow">
+        <div class="offset-1 col-md-2 d-md-block d-none px-0 bg-white shadow">
             <div class="nav sticky-top flex-column" id="sidebar">
                 <!-- 头像 -->
                 <img class="m-auto rounded-circle" src="~/images/avator.jpg" id="avator" alt="">
@@ -79,20 +89,20 @@
                     @ViewBag.Settings["BlogIntro"]
                 </div>
                 <!-- 按钮 -->
-                <div class="pt-2 p-4 border-top">
-                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Index" asp-route-slug="@null" asp-route-page="">
+                <div class="py-4 border-top">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn" asp-controller="Home" asp-action="Index" asp-route-slug="@null" asp-route-page="">
                         <i class="mi mi-Home"></i>
                         首页
                     </a>
-                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Filing">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn" asp-controller="Home" asp-action="Filing">
                         <i class="mi mi-Folder"></i>
                         归档
                     </a>
-                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="Friend">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn" asp-controller="Home" asp-action="Friend">
                         <i class="mi mi-Link"></i>
                         友链
                     </a>
-                    <a type="button" class="btn btn-block bg-white ml-0" asp-controller="Home" asp-action="About">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn" asp-controller="Home" asp-action="About">
                         <i class="mi mi-Info"></i>
                         关于
                     </a>
@@ -104,26 +114,15 @@
                 <!-- 文章卡片区 -->
                 <div class="col-md-9 pt-4 pb-0 px-4" id="content">
                     @RenderBody()
-                    <!-- 页尾 -->
-                    <footer class="page-footer shadow">
-                        <div class="footer-copyright bg-white text-dark text-center small py-3 ">
-                            <!-- 未设置则输出默认 -->
-                            @if (ViewBag.Settings.ContainsKey("Copyright") && ViewBag.Settings["Copyright"] != "")
-                            {
-                                @ViewBag.Settings["Copyright"]
-                            }
-                            else
-                            {
-                                @:© @DateTime.Now.Year.ToString() Copyright:
-                                <a href="@Url.Content("~/")" class="text-dark"> @ViewBag.Settings["BlogName"]</a>
-                            }
-                        </div>
-                    </footer>
+                    <!-- 页尾（正常） -->
+                    <div class="d-none d-md-block">
+                        @{ await Html.RenderPartialAsync("_Footer"); }
+                    </div>
                 </div>
                 <!-- 右侧边栏 -->
                 <div class="col-md-3 pt-4 px-4 px-md-0" id="second-sidebar">
                     <!-- 公告栏 -->
-                    @if (ViewBag.Settings.ContainsKey("Notice") && ViewBag.Settings["Notice"] != "")
+                    @if (!string.IsNullOrEmpty(ViewBag.Settings["Notice"]))
                     {
                         <div class="card shadow p-3 mb-4">
                             <div class="card-header bg-white px-1 py-2">
@@ -139,6 +138,10 @@
                     {
                         @await RenderSectionAsync("SecondSidebar", required: false)
                     }
+                    <!-- 页尾（小屏） -->
+                    <div class="d-md-none d-block">
+                        @{ await Html.RenderPartialAsync("_Footer"); }
+                    </div>
                 </div>
             </div>
         </div>
@@ -159,10 +162,20 @@
 </div>
 
 <script>
-    // 初始化Tooltip
     $(function() {
+        // 初始化Tooltip
         $('[data-toggle="tooltip"]').tooltip();
-    })
+        $('.nav-btn').hover(
+            function() {
+                $(this).addClass('bg-gray');
+                $(this).addClass('text-white');
+            },
+            function() {
+                $(this).removeClass('bg-gray');
+                $(this).removeClass('text-white');
+            }
+        );
+    });
 </script>
 
 @if (IsSectionDefined("BottomScripts"))

@@ -12,7 +12,7 @@
     <environment exclude="Development">
         <script src="https://cdn.jsdelivr.net/npm/clamp-js@0.7.0/clamp.min.js"></script>
     </environment>
-}    
+}
 
 <style>
     .friend-introduce {
@@ -41,19 +41,20 @@
                         <div class="position-relative h-100">
                             <div class="h-50 w-100 @Model.Colors[colorIndex] position-absolute text-white text-center">
                             </div>
-                            <!-- Card image -->
+                            <!-- 头像 -->
                             <div class="w-50 mx-auto position-relative">
                                 <a href="@friend.Url" target="_blank">
                                     <img class="card-img-top rounded-circle" src="@friend.Avatar">
                                 </a>
                             </div>
                         </div>
-                        <!-- Card body -->
+                        <!-- 友链信息 -->
                         <div class="card-body text-center p-1">
+                            <!-- 网站名 -->
                             <a href="@friend.Url" target="_blank">
                                 <h5 class="card-title friend-name pt-1 pb-0 mb-1">@friend.Name</h5>
                             </a>
-                            <!-- Text -->
+                            <!-- 网站介绍 -->
                             <p class="card-text friend-introduce p-1 mb-2">
                                 @friend.Introduce
                             </p>
@@ -65,10 +66,18 @@
     </div>
 </div>
 
+@section SecondSidebar{
+    <!-- 动态栏 -->
+    @if (ViewBag.Settings["FeedSwitch"] == "on")
+    {
+        @await Component.InvokeAsync("FeedBlock")
+    }
+}
+
 @section BottomScripts{
     <script type="text/javascript">
-        $(function() {
-            $('.friend-introduce').each(function() {
+        $(function () {
+            $('.friend-introduce').each(function () {
                 $clamp(this, { clamp: 'auto' });
             });
             $('.friend-name').each(function () {

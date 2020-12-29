@@ -2,6 +2,7 @@ using FluentBlog.Infrastructure;
 using FluentBlog.Models;
 using System.Collections.Generic;
 using System.Linq;
+using FluentBlog.Enum;
 
 namespace FluentBlog.DataRepositories
 {
@@ -58,24 +59,24 @@ namespace FluentBlog.DataRepositories
             }
         }
 
-        // 用分类id查文章
+        // 查询分类/标签下的所有文章
         public List<Archive> GetArchivesByMetaId(int mid)
         {
             var archiveIdList = _context.Relationships.Where(r => r.Mid.Equals(mid)).Select(r => r.Aid).ToList();
             return archiveIdList.Select(aid => _context.Archives.Find(aid)).ToList();
         }
 
-        // 用文章id查分类
-        public List<Meta> GetMetasByArchiveId(int aid, int?type)
+        // 查询文章所属的分类/标签
+        public List<Meta> GetMetasByArchiveId(int aid, MetaType type)
         {
             List<int> metaIdList = _context.Relationships.Where(r => r.Aid.Equals(aid)).Select(r => r.Mid).ToList();
             return type switch
             {
                 // 分类
-                0 => metaIdList.Select(mid => _context.Metas.Find(mid))
+                MetaType.Category => metaIdList.Select(mid => _context.Metas.Find(mid))
                     .Where(m => m.Type.Equals("category")).ToList(),
                 // 标签
-                1 => metaIdList.Select(mid => _context.Metas.Find(mid)).Where(m => m.Type.Equals("tag")).ToList(),
+                MetaType.Tag => metaIdList.Select(mid => _context.Metas.Find(mid)).Where(m => m.Type.Equals("tag")).ToList(),
                 // 全部
                 _ => metaIdList.Select(mid => _context.Metas.Find(mid)).ToList()
             };

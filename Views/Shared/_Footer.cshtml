@@ -1,0 +1,14 @@
+<footer class="page-footer shadow">
+    <div class="footer-copyright bg-white text-dark text-center small py-3 ">
+        <!-- 未设置则输出默认 -->
+        @if (!string.IsNullOrEmpty(ViewBag.Settings["Copyright"]))
+        {
+            @ViewBag.Settings["Copyright"]
+        }
+        else
+        {
+            @:© @DateTime.Now.Year.ToString() Copyright:
+            <a href="@Url.Content("~/")" class="text-dark"> @ViewBag.Settings["BlogName"]</a>
+        }
+    </div>
+</footer>

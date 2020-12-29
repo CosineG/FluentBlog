@@ -23,7 +23,6 @@
 <!-- 显示当前选择的分类 -->
 @if (Model.CurrentMeta != null)
 {
-    <div>
         <div class="card mb-4 shadow">
             <div class="card-body">
                 @{
@@ -44,7 +43,6 @@
                 }
             </div>
         </div>
-    </div>
 }
 
 @{
@@ -65,7 +63,7 @@
                 <!--标题-->
                 <h3 class="card-title font-weight-bold m-0">
                     <a id="title" class="text-dark text-decoration-none" asp-controller="Home" asp-action="Archive" asp-route-aid="@Model.Archives[i].Aid">@Model.Archives[i].Title</a>
-                    @if (i == 0 && Model.PageNum == 1)
+                    @if ((DateTime.Now - Model.Archives[i].Created).Days <= 7)
                     {
                         <span class="badge badge-success">New</span>
                     }
@@ -110,41 +108,54 @@
         </div>
     }
 }
+
 <!--分页导航-->
 <nav id="page-navigation">
     <ul class="pagination justify-content-center">
         <!--首页-->
         <li class="page-item shadow">
-            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@(Model.CurrentMeta?.Slug)" asp-route-page="">
-                <span aria-hidden="true">
-                    <i class="mi mi-ChevronLeft"></i> 首页
-                </span>
+            <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="">
+                首页
             </a>
         </li>
         <!--前一页-->
-        @if (Model.PageNum != 1)
+        @if (Model.PageNum > 1)
         {
             <li class="page-item shadow">
-                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@(Model.PageNum - 1)">@(Model.PageNum - 1)</a>
+                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@(Model.PageNum - 1)">
+                    <i class="mi mi-ChevronLeft"></i>
+                </a>
             </li>
         }
-        <!--当前页-->
-        <li class="page-item shadow active">
-            <a class="page-link text-dark">@Model.PageNum</a>
-        </li>
+        <!--数字页码页-->
+        @for (int i = Model.PageNum - 2; i < Model.PageNum + 2; i++)
+        {
+            if (i == Model.PageNum)
+            {
+                <li class="page-item shadow active">
+                    <a class="page-link text-white bg-gray">@i</a>
+                </li>
+            }
+            else if (i > 0 && i <= Model.PageCount)
+            {
+                <li class="page-item shadow">
+                    <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@i">@i</a>
+                </li>
+            }
+        }
         <!--后一页-->
-        @if (Model.PageNum != Model.PageCount)
+        @if (Model.PageNum < Model.PageCount)
         {
             <li class="page-item shadow">
-                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@(Model.PageNum + 1)">@(Model.PageNum + 1)</a>
+                <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@(Model.PageNum + 1)">
+                    <i class="mi mi-ChevronRight"></i>
+                </a>
             </li>
         }
-        <!--末页-->
+        <!--尾页-->
         <li class="page-item shadow">
             <a class="page-link text-dark" asp-controller="Home" asp-action="Index" asp-route-slug="@Model.CurrentMeta?.Slug" asp-route-page="@Model.PageCount">
-                <span aria-hidden="true">
-                    末页 <i class="mi mi-ChevronRight"></i>
-                </span>
+                尾页
             </a>
         </li>
     </ul>

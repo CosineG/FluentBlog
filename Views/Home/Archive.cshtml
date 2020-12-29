@@ -29,7 +29,11 @@
 </style>
 
 <div class="view">
-    <img src=@(Model.Archive.TitleImage ?? Url.Content(Model.DefaultTitleImage)) class="img-fluid card-img-top" alt="photo">
+    @if (string.IsNullOrEmpty(Model.Archive.TitleImage))
+    {
+        Model.Archive.TitleImage = Url.Content(Model.DefaultTitleImage);
+    }
+    <img src=@Model.Archive.TitleImage class="img-fluid card-img-top" alt="photo">
 </div>
 
 <div class="card mb-4 shadow">
@@ -103,13 +107,13 @@
                 </div>
                 <div class="collapse" id="donate">
                     <div class="m-3 row text-center">
-                        @if (ViewBag.Settings["DonateAlipay"] != "")
+                        @if (!string.IsNullOrEmpty(ViewBag.Settings["DonateAlipay"]))
                         {
                             <div class="col-md text-center">
                                 <img class="donate-qrcode" src="@ViewBag.Settings["DonateAlipay"]" alt="支付宝"/>
                             </div>
                         }
-                        @if (ViewBag.Settings["DonateWechat"] != "")
+                        @if (!string.IsNullOrEmpty(ViewBag.Settings["DonateWechat"]))
                         {
                             <div class="col-md text-center">
                                 <img class="donate-qrcode" src="@ViewBag.Settings["DonateWechat"]" alt="微信"/>
@@ -133,7 +137,7 @@
             <h5 class="font-weight-normal"><i class="mi mi-AllApps"></i> 文章目录</h5>
         </div>
         <!--markdown toc-->
-        <div class="markdown-body editormd-preview-container p-1 small" id="toc-container">
+        <div class="markdown-body editormd-preview-container small p-1" id="toc-container">
             <!--加载动画-->
             <div class="progress-cover progress-cover-primary">
                 <br/>

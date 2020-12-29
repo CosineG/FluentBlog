@@ -1,0 +1,26 @@
+<div class="card mb-4 shadow">
+    <!--主体-->
+    <div class="card-body">
+        <div class="p-3">
+            <!--标题-->
+            <h2 class="card-title font-weight-bold mb-2 mt-3">
+                页面未找到
+            </h2>
+            <p>404 Not Found</p>
+        </div>
+        <hr>
+        <div>
+            <div class="row py-4">
+                <div class="col-md-6">
+                    <img class="w-100 h-auto" src="~/images/404.png"/>
+                </div>
+                <div class="col-md-6">
+                    <p>对不起，未找到您需要的页面。</p>
+                    <p>可能是URL拼写错误，或是您要查找的页面已不再可用。</p>
+                    <a class="btn btn-secondary btn-sm ml-0" asp-controller="Home" asp-action="Index" asp-route-slug="" asp-route-page="">返回首页</a>
+                    <a class="btn btn-primary btn-sm ml-0" href="javascript:history.back()">返回上一页</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

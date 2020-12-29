@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,7 +48,8 @@ namespace FluentBlog
                 .AddErrorDescriber<CustomIdentityErrorDescriberZhHans>()
                 .AddEntityFrameworkStores<AppDbContext>();
             services.AddControllersWithViews(a => a.EnableEndpointRouting = false)
-                .AddXmlSerializerFormatters();
+                .AddXmlSerializerFormatters()
+                .AddJsonOptions(option => { });
             // 依赖注入仓储
             services.AddScoped<IMetaRepository, SqlMetaRepository>();
             services.AddScoped<IArchiveRepository, SqlArchiveRepository>();
@@ -55,6 +57,8 @@ namespace FluentBlog
             services.AddScoped<IFriendRepository, SqlFriendRepository>();
             services.AddScoped<IRelationshipRepository, SqlRelationshipRepository>();
             services.AddScoped<ISettingRepository, SqlSettingRepository>();
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -63,9 +67,13 @@ namespace FluentBlog
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            else
+            {
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            }
             app.UseStaticFiles();
             app.UseAuthentication();
+            app.UseSession();
             app.UseMvcWithDefaultRoute();
         }
     }

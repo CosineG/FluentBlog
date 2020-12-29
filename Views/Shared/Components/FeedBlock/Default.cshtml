@@ -1,6 +1,4 @@
-@using FluentBlog.Models
 @using System.Globalization
-@using FluentBlog.ViewComponents
 @model FluentBlog.ViewModels.FeedViewModel
 
 <style>
@@ -26,10 +24,20 @@
             </span>
             &nbsp;
             <!-- 点赞 -->
-            <a class="text-muted small" onclick="addLikesCount(@Model.Feeds[0].Fid)" href="#" id="likes">
-                <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="赞" id="likesIcon"></i>
-                <span id="likesCount">@Model.Feeds[0].Likes</span>
-            </a>
+            @if (Model.LikedList[0])
+            {
+                <a class="text-muted text-primary small" id="likes">
+                    <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="已赞" id="likesIcon"></i>
+                    <span id="likesCount">@Model.Feeds[0].Likes</span>
+                </a>
+            }
+            else
+            {
+                <a class="text-muted small" onclick="addLikesCount(@Model.Feeds[0].Fid)" href="#" id="likes">
+                    <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="赞" id="likesIcon"></i>
+                    <span id="likesCount">@Model.Feeds[0].Likes</span>
+                </a>
+            }
         </blockquote>
     </div>
     <!-- 数据 -->

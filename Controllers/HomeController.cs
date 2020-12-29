@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using FluentBlog.DataRepositories;
 using FluentBlog.Models;
 using FluentBlog.ViewModels;
+using FluentBlog.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 
@@ -43,7 +44,7 @@ namespace FluentBlog.Controllers
         [Route("/page/{page}")]
         // 分类下的文章
         [Route("/meta/{slug}/{page?}")]
-        public ViewResult Index(int? page, string slug = null)
+        public IActionResult Index(int? page, string slug = null)
         {
             // 获取用户设置的每页包含文章数
             var settings = _settingRepository.GetSettings();
@@ -58,8 +59,7 @@ namespace FluentBlog.Controllers
                 int pageCount = _archiveRepository.GetArchivesCount() / archivesCountPerPage + 1;
                 if (page != null && page > pageCount)
                 {
-                    Response.StatusCode = 404;
-                    return View("ArchiveNotFound");
+                    return NotFound();
                 }
 
                 // 得到文章详情
@@ -69,9 +69,13 @@ namespace FluentBlog.Controllers
                 foreach (var archive in archives)
                 {
                     archive.Text = _archiveRepository.MarkdownToPlainText(archive.Text);
-                    archive.TitleImage ??= _archiveRepository.GetDefaultTitleImage();
+                    if (string.IsNullOrEmpty(archive.TitleImage))
+                    {
+                        archive.TitleImage = _archiveRepository.GetDefaultTitleImage();
+                    }
+
                     authors.Add(_customUserManager.GetUserById(archive.Uid));
-                    categories.Add(_relationshipRepository.GetMetasByArchiveId(archive.Aid, 0));
+                    categories.Add(_relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Category));
                 }
 
                 homeViewModel = new HomeViewModel()
@@ -98,16 +102,14 @@ namespace FluentBlog.Controllers
                 Meta currentMeta = _metaRepository.GetMetaBySlug(slug);
                 if (currentMeta == null)
                 {
-                    Response.StatusCode = 404;
-                    return View("ArchiveNotFound");
+                    return NotFound();
                 }
 
                 // 得到总页数
                 int pageCount = _metaRepository.GetArchiveOfMetaCount(currentMeta.Mid) / archivesCountPerPage + 1;
                 if (page != null && page > pageCount)
                 {
-                    Response.StatusCode = 404;
-                    return View("ArchiveNotFound");
+                    return NotFound();
                 }
 
                 // 得到文章详情
@@ -118,9 +120,13 @@ namespace FluentBlog.Controllers
                 foreach (var archive in archives)
                 {
                     archive.Text = _archiveRepository.MarkdownToPlainText(archive.Text);
-                    archive.TitleImage ??= _archiveRepository.GetDefaultTitleImage();
+                    if (string.IsNullOrEmpty(archive.TitleImage))
+                    {
+                        archive.TitleImage = _archiveRepository.GetDefaultTitleImage();
+                    }
+
                     authors.Add(_customUserManager.GetUserById(archive.Uid));
-                    categories.Add(_relationshipRepository.GetMetasByArchiveId(archive.Aid, 0));
+                    categories.Add(_relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Category));
                 }
 
                 homeViewModel = new HomeViewModel
@@ -147,21 +153,33 @@ namespace FluentBlog.Controllers
 
         // 文章页
         [Route("/archive/{aid}")]
-        public ViewResult Archive(int aid)
+        public IActionResult Archive(int aid)
         {
             Archive archive = _archiveRepository.GetArchiveById(aid);
             //判断文章是否存在
             if (archive == null)
             {
-                Response.StatusCode = 404;
-                return View("ArchiveNotFound", aid);
+                return NotFound();
             }
 
-            archive = _archiveRepository.AddViewsCount(archive);
+            // 增加阅读量
+            try
+            {
+                if (!Convert.ToBoolean(HttpContext.Session.GetString("ViewArchive" + aid)))
+                {
+                    throw new FormatException();
+                }
+            }
+            catch (FormatException)
+            {
+                archive = _archiveRepository.AddViewsCount(archive);
+                HttpContext.Session.SetString("ViewArchive" + aid, "True");
+            }
+
             // 查询作者
             User author = _customUserManager.GetUserById(archive.Uid);
-            List<Meta> categories = _relationshipRepository.GetMetasByArchiveId(archive.Aid, 0);
-            List<Meta> tags = _relationshipRepository.GetMetasByArchiveId(archive.Aid, 1);
+            List<Meta> categories = _relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Category);
+            List<Meta> tags = _relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Tag);
 
             ArchiveViewModel archiveViewModel = new ArchiveViewModel
             {
@@ -179,9 +197,40 @@ namespace FluentBlog.Controllers
 
         // 动态
         [Route("/feed")]
-        public ViewResult Feed()
+        public IActionResult Feed()
         {
-            return View();
+            List<Feed> feeds = _feedRepository.GetAllFeeds();
+            if (feeds == null)
+            {
+                return Content("");
+            }
+
+            List<User> authors = feeds.Select(feed => _customUserManager.GetUserById(feed.Uid)).ToList();
+            List<bool> likedList = new List<bool>();
+            foreach (var feed in feeds)
+            {
+                bool liked;
+                try
+                {
+                    liked = Convert.ToBoolean(HttpContext.Session.GetString("LikeFeed" + feed.Fid));
+                }
+                catch (FormatException)
+                {
+                    liked = false;
+                }
+
+                likedList.Add(liked);
+            }
+
+            int feedsCount = _feedRepository.GetFeedsCount();
+            FeedViewModel feedViewModel = new FeedViewModel
+            {
+                LikedList = likedList,
+                FeedsCount = feedsCount,
+                Feeds = feeds,
+                Authors = authors
+            };
+            return View(feedViewModel);
         }
 
         // 给动态点赞
@@ -189,12 +238,13 @@ namespace FluentBlog.Controllers
         public JsonResult AddFeedLikesCount(int fid)
         {
             Feed feed = _feedRepository.AddLikesCount(fid);
+            HttpContext.Session.SetString("LikeFeed" + fid, "True");
             return Json(feed);
         }
 
         // 归档
         [Route("/filing")]
-        public ViewResult Filing()
+        public IActionResult Filing()
         {
             // 统计信息
             int archiveCount = _archiveRepository.GetArchivesCount();
@@ -257,7 +307,7 @@ namespace FluentBlog.Controllers
 
         // 友链
         [Route("/friend")]
-        public ViewResult Friend()
+        public IActionResult Friend()
         {
             int friendsCount = _friendRepository.GetFriendsCount();
             List<Friend> friends = _friendRepository.GetAllFriends();
@@ -266,19 +316,17 @@ namespace FluentBlog.Controllers
                 FriendsCount = friendsCount,
                 Friends = friends
             };
+            ViewBag.Title = "友情链接" + " - ";
             return View(friendViewModel);
         }
 
         // 关于
         [Route("/about")]
-        public ViewResult About()
+        public IActionResult About()
         {
-            Archive archive = _archiveRepository.GetArchiveById(0);
-            ArchiveViewModel archiveViewModel = new ArchiveViewModel
-            {
-                Archive = archive
-            };
-            return View(archiveViewModel);
+            ViewBag.About = _settingRepository.GetSettings()["About"];
+            ViewBag.Title = "关于" + " - ";
+            return View();
         }
     }
 }

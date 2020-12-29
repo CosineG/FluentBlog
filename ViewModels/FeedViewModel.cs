@@ -10,5 +10,7 @@ namespace FluentBlog.ViewModels
     {
         public List<Feed> Feeds { get; set; }
         public List<User> Authors { get; set; }
+        public int FeedsCount { get; set; }
+        public List<bool> LikedList { get; set; }
     }
 }

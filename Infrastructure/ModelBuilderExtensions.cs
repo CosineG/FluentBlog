@@ -32,6 +32,14 @@ namespace FluentBlog.Infrastructure
                     Uid = "d89af503-9855-465b-a575-fffa345f97e6"
                 }
             );
+            modelBuilder.Entity<Relationship>().HasData(
+                new Relationship
+                {
+                    Rid = 1,
+                    Aid = 1,
+                    Mid = 1
+                }
+            );
             modelBuilder.Entity<Setting>().HasData(
                 new Setting
                 {
@@ -46,7 +54,12 @@ namespace FluentBlog.Infrastructure
                 new Setting
                 {
                     Name = "Notice",
-                    Value = "欢迎使用Fluent Blog，一个基于ASP.NET Core 3.1的MVC博客框架。"
+                    Value = "欢迎使用Fluent Blog，一个基于ASP.NET Core 5.0的MVC博客框架。"
+                },
+                new Setting
+                {
+                    Name = "Copyright",
+                    Value = ""
                 },
                 new Setting
                 {
@@ -72,6 +85,16 @@ namespace FluentBlog.Infrastructure
                 {
                     Name = "DonateWechat",
                     Value = ""
+                },
+                new Setting
+                {
+                    Name = "Contacts",
+                    Value = "[]"
+                },
+                new Setting
+                {
+                    Name = "About",
+                    Value = "欢迎使用Fluent Blog。这里是“关于”页面。"
                 }
             );
         }

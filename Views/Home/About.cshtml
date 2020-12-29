@@ -1,16 +1,13 @@
-@using FluentBlog.Models
-@model FluentBlog.ViewModels.ArchiveViewModel
-
 @section HeadScripts{
     <environment include="Development">
-        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
+        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css" />
         <script src="~/lib/editor.md/editormd.js"></script>
         <script src="~/lib/editor.md/lib/marked.min.js"></script>
         <script src="~/lib/editor.md/lib/prettify.min.js"></script>
     </environment>
 
     <environment exclude="Development">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css" />
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
@@ -52,15 +49,26 @@
                 <br />
             </div>
             <!--正文-->
-            <textarea style="display: none;">@Model.Archive.Text</textarea>
+            <textarea style="display: none;">@ViewBag.About</textarea>
         </div>
     </div>
 </div>
 
+@section SecondSidebar{
+    <!-- 联系方式栏 -->
+    @if (ViewBag.Settings["Contacts"] != "[]")
+    {
+        @(await Component.InvokeAsync("ContactBlock"))
+        @if (ViewBag.Settings["FeedSwitch"] == "on")
+        {
+            @await Component.InvokeAsync("FeedBlock")
+        }
+    }
+}
 @section BottomScripts{
     <script type="text/javascript">
-        $(function() {
-            var editormdView = editormd.markdownToHTML("description",{});
+        $(function () {
+            var editormdView = editormd.markdownToHTML("description", {});
             $('.progress-cover').css('display', 'none');
         });
     </script>
