@@ -3,14 +3,14 @@
 
 @section HeadScripts{
     <environment include="Development">
-        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
+        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css" />
         <script src="~/lib/editor.md/editormd.js"></script>
         <script src="~/lib/editor.md/lib/marked.min.js"></script>
         <script src="~/lib/editor.md/lib/prettify.min.js"></script>
     </environment>
 
     <environment exclude="Development">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css" />
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
@@ -25,7 +25,9 @@
         height: auto;
     }
 
-    .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 { font-weight: bold !important; }
+    .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+        font-weight: bold !important;
+    }
 </style>
 
 <div class="view">
@@ -78,8 +80,8 @@
         <div id="description" class="font-weight-normal">
             <!--加载动画-->
             <div class="progress-cover progress-cover-primary" id="progress-cover">
-                <br/>
-                <br/>
+                <br />
+                <br />
                 <div class="progress progress-medium fluent-position">
                     <span class="progress-span"></span>
                     <span class="progress-span"></span>
@@ -88,15 +90,15 @@
                     <span class="progress-span"></span>
                     <span class="progress-span"></span>
                 </div>
-                <br/>
-                <br/>
+                <br />
+                <br />
             </div>
             <!--正文-->
             <textarea class="d-none">@Model.Archive.Text</textarea>
 
         </div>
         <!-- 文章页尾 -->
-        <div class="card-footer bg-transparent justify-content-around">
+        <div class="card-footer bg-transparent justify-content-around mt-3">
             <!-- 打赏 -->
             @if (ViewBag.Settings["DonateSwitch"] == "on")
             {
@@ -110,13 +112,13 @@
                         @if (!string.IsNullOrEmpty(ViewBag.Settings["DonateAlipay"]))
                         {
                             <div class="col-md text-center">
-                                <img class="donate-qrcode" src="@ViewBag.Settings["DonateAlipay"]" alt="支付宝"/>
+                                <img class="donate-qrcode" src="@ViewBag.Settings["DonateAlipay"]" alt="支付宝" />
                             </div>
                         }
                         @if (!string.IsNullOrEmpty(ViewBag.Settings["DonateWechat"]))
                         {
                             <div class="col-md text-center">
-                                <img class="donate-qrcode" src="@ViewBag.Settings["DonateWechat"]" alt="微信"/>
+                                <img class="donate-qrcode" src="@ViewBag.Settings["DonateWechat"]" alt="微信" />
                             </div>
                         }
                     </div>
@@ -132,6 +134,7 @@
 </div>
 
 @section SecondSidebar{
+    <!-- 文章目录 -->
     <div class="card shadow mb-4 p-3" id="catalog">
         <div class="card-header bg-white px-1 py-2 mb-2">
             <h5 class="font-weight-normal"><i class="mi mi-AllApps"></i> 文章目录</h5>
@@ -140,8 +143,8 @@
         <div class="markdown-body editormd-preview-container small p-1" id="toc-container">
             <!--加载动画-->
             <div class="progress-cover progress-cover-primary">
-                <br/>
-                <br/>
+                <br />
+                <br />
                 <div class="progress progress-medium fluent-position">
                     <span class="progress-span"></span>
                     <span class="progress-span"></span>
@@ -150,8 +153,8 @@
                     <span class="progress-span"></span>
                     <span class="progress-span"></span>
                 </div>
-                <br/>
-                <br/>
+                <br />
+                <br />
             </div>
         </div>
     </div>
@@ -171,11 +174,13 @@
             </div>
         </div>
     }
+    <!-- 热门文章 -->
+    @await Component.InvokeAsync("TopArchivesBlock")
 }
 
 @section BottomScripts{
     <script type="text/javascript">
-        $(function() {
+        $(function () {
             var editormdView = editormd.markdownToHTML("description",
                 {
                     path: "lib/editor.md/lib",
@@ -184,6 +189,9 @@
                     tocDropdown: false
                 });
             $('.progress-cover').addClass('d-none');
+            if ($('.markdown-toc-list').has('li').length === 0) {
+                $('#catalog').addClass('d-none');
+            }
         });
     </script>
 }

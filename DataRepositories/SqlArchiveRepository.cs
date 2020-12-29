@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FluentBlog.Enum;
 using Microsoft.AspNetCore.Hosting;
 
 namespace FluentBlog.DataRepositories
@@ -66,6 +67,18 @@ namespace FluentBlog.DataRepositories
         public List<Archive> GetAllArchives()
         {
             return _context.Archives.OrderByDescending(a => a.Created).ToList();
+        }
+
+        // 获得热门文章
+        public List<Archive> GetTopArchives(TopArchiveRule rule)
+        {
+            int count = GetArchivesCount();
+            count = count > 5 ? 5 : count;
+            return rule switch
+            {
+                TopArchiveRule.Comment => _context.Archives.OrderByDescending(a => a.CommentsNum).Take(count).ToList(),
+                _ => _context.Archives.OrderByDescending(a => a.Views).Take(count).ToList()
+            };
         }
 
         // 根据页码取得文章

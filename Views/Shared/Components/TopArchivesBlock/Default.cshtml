@@ -1,0 +1,59 @@
+@using System.Globalization
+@model FluentBlog.ViewModels.TopArchivesViewModel
+
+<style>
+    .medium-small { font-size: 0.9rem !important }
+</style>
+
+@if (Model.ArchivesByView.Count != 0)
+{
+    <div class="card shadow p-3 mb-4">
+        <div class="card-header bg-white px-1 py-2">
+            <h5 class="font-weight-normal"><i class="mi mi-Calories"></i> 热门文章</h5>
+        </div>
+        <div class="card-body p-1">
+            <!--tab标签-->
+            <ul class="nav nav-tabs nav-justified fluent-tabs px-3 py-2" role="tablist">
+                <!--阅读量-->
+                <li class="nav-item">
+                    <a class="nav-link medium-small active" id="view-tab" data-toggle="tab" href="#view-tabpanel" aria-selected="true">阅读量</a>
+                </li>
+                <!--评论量-->
+                <li class="nav-item">
+                    <a class="nav-link medium-small" id="comment-tab" data-toggle="tab" href="#comment-tabpanel" aria-selected="false">评论量</a>
+                </li>
+            </ul>
+            <!--tab内容-->
+            <div class="tab-content m-0 px-1 py-2">
+                <!--阅读量-->
+                <div class="tab-pane active fade show" id="view-tabpanel">
+                    @for (var i = 0; i < Model.ArchivesByView.Count; i++)
+                    {
+                        var archive = Model.ArchivesByView[i];
+                        @:<!--标题-->
+                        <a class="text-dark text-decoration-none font-weight-normal medium-small text-truncate d-inline-block mw-100" asp-controller="Home" asp-action="Archive" asp-route-aid="@archive.Aid">@(i + 1) - @archive.Title</a>
+                        <br/>
+                        @:<!--浏览量-->
+                        <span class="d-md-block d-none text-right medium-small">
+                            <i class="mi mi-View"></i> @archive.Views
+                        </span>
+                    }
+                </div>
+                <!--评论量-->
+                <div class="tab-pane fade" id="comment-tabpanel">
+                    @for (var i = 0; i < Model.ArchivesByComment.Count; i++)
+                    {
+                        var archive = Model.ArchivesByComment[i];
+                        @:<!--标题-->
+                        <a class="text-dark text-decoration-none font-weight-normal medium-small text-truncate d-inline-block mw-100" asp-controller="Home" asp-action="Archive" asp-route-aid="@archive.Aid">@(i + 1) - @archive.Title</a>
+                        <br/>
+                        @:<!--评论数-->
+                        <span class="d-md-block d-none text-right medium-small">
+                            <i class="mi mi-Comment"></i> @archive.CommentsNum
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

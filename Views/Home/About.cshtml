@@ -59,10 +59,6 @@
     @if (ViewBag.Settings["Contacts"] != "[]")
     {
         @(await Component.InvokeAsync("ContactBlock"))
-        @if (ViewBag.Settings["FeedSwitch"] == "on")
-        {
-            @await Component.InvokeAsync("FeedBlock")
-        }
     }
 }
 @section BottomScripts{

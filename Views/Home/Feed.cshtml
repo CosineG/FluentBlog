@@ -1,7 +1,28 @@
 @model FluentBlog.ViewModels.FeedViewModel
 @{ bool isLeft = false; }
-<link rel="stylesheet" type="text/css" href="css/timeline.css"/>
 
+@section HeadScripts{
+    <link rel="stylesheet" type="text/css" href="css/timeline.css"/>
+    <script type="text/javascript" src="js/timeline.js"></script>
+    <script>
+        function addLikesCount(fid) {
+            $.ajax({
+                url: '@Url.Action("AddFeedLikesCount", "Home")',
+                type: 'GET',
+                dataType: 'json',
+                cache: false,
+                data: { fid: fid },
+                success: function(feed) {
+                    $(`#likes-${fid}`).addClass("text-primary");
+                    $(`#likes-${fid}`).removeAttr("href");
+                    $(`#likes-${fid}`).removeAttr("onclick");
+                    $(`#likesIcon-${fid}`).attr("data-original-title", "已赞");
+                    $(`#likesCount-${fid}`).text(feed["likes"]);
+                }
+            });
+        }
+    </script>
+}
 
 <div class="card mb-4 shadow">
     <div class="card-body">
@@ -52,7 +73,7 @@
                                         }
                                         else
                                         {
-                                            <a class="text-muted small" onclick="addLikesCount(@Model.Feeds[i].Fid)" href="#" id="@("likes-" + Model.Feeds[i].Fid)">
+                                            <a class="text-muted small" onclick="addLikesCount(@Model.Feeds[i].Fid)" href="javascript:void(0);" id="@("likes-" + Model.Feeds[i].Fid)">
                                                 <i class="mi mi-Like small" data-toggle="tooltip" data-placement="top" title="赞" id="@("likesIcon-" + Model.Feeds[i].Fid)"></i>
                                                 <span id="@("likesCount-" + Model.Feeds[i].Fid)">@Model.Feeds[i].Likes</span>
                                             </a>
@@ -68,7 +89,7 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="js/timeline.js"></script>
+
 <script type="text/javascript">
     $(document).ready(function() {
         $('.VivaTimeline').vivaTimeline({
@@ -76,21 +97,4 @@
             carouselTime: 3000
         });
     });
-
-    function addLikesCount(fid) {
-        $.ajax({
-            url: '@Url.Action("AddFeedLikesCount", "Home")',
-            type: 'GET',
-            dataType: 'json',
-            cache: false,
-            data: { fid: fid },
-            success: function(feed) {
-                $(`#likes-${fid}`).addClass("text-primary");
-                $(`#likes-${fid}`).removeAttr("href");
-                $(`#likes-${fid}`).removeAttr("onclick");
-                $(`#likesIcon-${fid}`).attr("data-original-title", "已赞");
-                $(`#likesCount-${fid}`).text(feed["likes"]);
-            }
-        });
-    }
 </script>

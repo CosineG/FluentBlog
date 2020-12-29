@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentBlog.Models;
+using FluentBlog.Enum;
 
 namespace FluentBlog.DataRepositories
 {
@@ -20,6 +21,8 @@ namespace FluentBlog.DataRepositories
         int GetArchivesCount();
         // 获得所有文章
         List<Archive> GetAllArchives();
+        // 获得热门文章
+        List<Archive> GetTopArchives(TopArchiveRule rule);
         // 获得第几页的文章
         List<Archive> GetArchivesByPage(int page, int archivesCountPerPage);
         // 没有标题图时随机调用默认标题图

@@ -18,31 +18,32 @@
         padding-bottom: 30%;
         overflow: hidden;
     }
+
 </style>
 
 <!-- 显示当前选择的分类 -->
 @if (Model.CurrentMeta != null)
 {
-        <div class="card mb-4 shadow">
-            <div class="card-body">
-                @{
-                    string pageInfo = "";
-                    if (Model.PageNum != 1)
-                    {
-                        pageInfo = " - " + "第" + Model.PageNum + "页";
-                    }
-                    switch (Model.CurrentMeta.Type)
-                    {
-                        case "category":
-                            <h2 class="card-title font-weight-bold m-0">分类：@Model.CurrentMeta.Name@pageInfo</h2>
-                            break;
-                        case "tag":
-                            <h2 class="card-title font-weight-bold m-0">标签：@Model.CurrentMeta.Name@pageInfo</h2>
-                            break;
-                    }
+    <div class="card mb-4 shadow">
+        <div class="card-body">
+            @{
+                string pageInfo = "";
+                if (Model.PageNum != 1)
+                {
+                    pageInfo = " - " + "第" + Model.PageNum + "页";
                 }
-            </div>
+                switch (Model.CurrentMeta.Type)
+                {
+                    case "category":
+                        <h2 class="card-title font-weight-bold m-0">分类：@Model.CurrentMeta.Name@pageInfo</h2>
+                        break;
+                    case "tag":
+                        <h2 class="card-title font-weight-bold m-0">标签：@Model.CurrentMeta.Name@pageInfo</h2>
+                        break;
+                }
+            }
         </div>
+    </div>
 }
 
 @{
@@ -70,7 +71,7 @@
                 </h3>
 
                 <!--分类-->
-                <div class="my-2">
+                <div class="py-3">
                     @{
                         for (int j = 0; j < Model.Categories[i].Count; j++)
                         {
@@ -167,6 +168,8 @@
     {
         @await Component.InvokeAsync("FeedBlock")
     }
+    <!-- 热门文章 -->
+    @await Component.InvokeAsync("TopArchivesBlock")
 }
 
 @section BottomScripts{
