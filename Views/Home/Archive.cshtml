@@ -7,6 +7,7 @@
         <script src="~/lib/editor.md/editormd.js"></script>
         <script src="~/lib/editor.md/lib/marked.min.js"></script>
         <script src="~/lib/editor.md/lib/prettify.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
     </environment>
 
     <environment exclude="Development">
@@ -14,7 +15,25 @@
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
     </environment>
+
+    <script>
+        function updateCommentsCount() {
+            $.ajax({
+                url: '@Url.Action("UpdateCommentsCount", "Home")',
+                type: 'GET',
+                dataType: 'json',
+                cache: false,
+                data: { url: window.location.pathname },
+                success: function(count) {
+                    if (count !== -1) {
+                        $(`#comments-count`).text(count);
+                    }
+                }
+            });
+        }
+    </script>
 }
 
 
@@ -71,7 +90,8 @@
                 <i class="mi mi-View" data-toggle="tooltip" data-placement="top" title="阅读次数"></i> @Model.Archive.Views
             </span>
             <span class="text-muted">
-                <i class="mi mi-Comment" data-toggle="tooltip" data-placement="top" title="评论数"></i> @Model.Archive.CommentsNum
+                <i class="mi mi-Comment" data-toggle="tooltip" data-placement="top" title="评论数"></i>
+                <span id="comments-count">@Model.Archive.CommentsNum</span>
             </span>
         </div>
         <hr>
@@ -133,6 +153,13 @@
     </div>
 </div>
 
+<!-- 评论区 -->
+<div class="card mb-4 shadow">
+    <div class="card-body">
+        <div id="vcomments" class="font-weight-normal"></div>
+    </div>
+</div>
+
 @section SecondSidebar{
     <!-- 文章目录 -->
     <div class="card shadow mb-4 p-3" id="catalog">
@@ -181,6 +208,7 @@
 @section BottomScripts{
     <script type="text/javascript">
         $(function () {
+            // 解析markdown
             var editormdView = editormd.markdownToHTML("description",
                 {
                     path: "lib/editor.md/lib",
@@ -189,9 +217,19 @@
                     tocDropdown: false
                 });
             $('.progress-cover').addClass('d-none');
+            // 如无目录则隐藏目录
             if ($('.markdown-toc-list').has('li').length === 0) {
                 $('#catalog').addClass('d-none');
             }
+            // 评论区
+            new Valine({
+                el: '#vcomments',
+                appId: '@ViewBag.Settings["LeanCloudAppID"]',
+                appKey: '@ViewBag.Settings["LeanCloudAppKey"]',
+                placeholder: '快来发表你的评论吧'
+            });
+            // 发表新评论时更新文章的评论数
+            $('.vnum').bind('DOMNodeInserted', updateCommentsCount);
         });
     </script>
 }

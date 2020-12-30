@@ -95,6 +95,26 @@ namespace FluentBlog.Infrastructure
                 {
                     Name = "About",
                     Value = "欢迎使用Fluent Blog。这里是“关于”页面。"
+                },
+                new Setting
+                {
+                    Name = "ApplyFriendNotice",
+                    Value = "欢迎申请友情链接。"
+                },
+                new Setting
+                {
+                    Name = "LeanCloudAppID",
+                    Value = ""
+                },
+                new Setting
+                {
+                    Name = "LeanCloudAppKey",
+                    Value = ""
+                },
+                new Setting
+                {
+                    Name = "LeanCloudAPIUrl",
+                    Value = ""
                 }
             );
         }

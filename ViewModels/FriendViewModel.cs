@@ -10,5 +10,6 @@ namespace FluentBlog.ViewModels
     {
         public List<Friend> Friends { get; set; }
         public int FriendsCount { get; set; }
+        public string Notice { get; set; }
     }
 }

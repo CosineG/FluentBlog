@@ -6,15 +6,25 @@
 
 @section HeadScripts{
     <environment include="Development">
+        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.preview.css"/>
+        <script src="~/lib/editor.md/editormd.js"></script>
+        <script src="~/lib/editor.md/lib/marked.min.js"></script>
+        <script src="~/lib/editor.md/lib/prettify.min.js"></script>
         <script src="~/lib/clamp-js/clamp.min.js"></script>
         <script src="lib/colorthief/dist/color-thief.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
     </environment>
 
     <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/clamp-js@0.7.0/clamp.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/colorthief@2.3.2/dist/color-thief.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
     </environment>
-    
+
     <script>
         // 卡片设置为头像的主题色
         function setColor(avatar, i) {
@@ -51,55 +61,102 @@
             <p>当前博客共拥有友链@(Model.FriendsCount)个</p>
         </div>
         <hr>
-        <div class="row m-0 px-3 py-4">
-            <!--加载动画-->
-            <div class="col-12 progress-cover progress-cover-primary">
-                <br />
-                <br />
-                <div class="progress progress-medium fluent-position">
-                    <span class="progress-span"></span>
-                    <span class="progress-span"></span>
-                    <span class="progress-span"></span>
-                    <span class="progress-span"></span>
-                    <span class="progress-span"></span>
-                    <span class="progress-span"></span>
-                </div>
-                <br />
-                <br />
-            </div>
-
-            <!--友链卡片-->
-            @for (var i = 0; i < Model.Friends.Count; i++)
-            {
-                var friend = Model.Friends[i];
-                <div class="col-sm-6 col-md-4">
-                    <div class="friend card mb-4 shadow d-none">
-                        <div class="py-2 w-100 @("color-" + i)"></div>
-                        <div class="position-relative h-100">
-                            <div class="h-50 w-100 @("color-" + i) position-absolute text-white text-center">
-                            </div>
-                            <!-- 头像 -->
-                            <div class="w-50 mx-auto position-relative">
-                                <a href="@friend.Url" target="_blank">
-                                    <img class="card-img-top rounded-circle" onload="setColor(this, @i)" src="@friend.Avatar" onerror="avatarError(this)" crossOrigin="anonymous">
-                                </a>
-                            </div>
+        <!--tab标签-->
+        <ul class="nav nav-tabs fluent-tabs px-3" role="tablist">
+            <!--友链-->
+            <li class="nav-item">
+                <a class="nav-link active" id="friend-tab" data-toggle="tab" href="#friend-tabpanel" aria-selected="true">友链</a>
+            </li>
+            <!--申请-->
+            <li class="nav-item">
+                <a class="nav-link" id="apply-tab" data-toggle="tab" href="#apply-tabpanel" aria-selected="false">申请</a>
+            </li>
+        </ul>
+        <!--tab内容-->
+        <div class="tab-content m-0">
+            <!--友链-->
+            <div class="tab-pane fade active show" id="friend-tabpanel">
+                <div class="row m-0 pt-4">
+                    <!--加载动画-->
+                    <div class="col-12 progress-cover progress-cover-primary">
+                        <br/>
+                        <br/>
+                        <div class="progress progress-medium fluent-position">
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
                         </div>
-                        <!-- 友链信息 -->
-                        <div class="card-body text-center p-1">
-                            <!-- 网站名 -->
-                            <a href="@friend.Url" target="_blank">
-                                <h5 class="card-title friend-name pt-1 pb-0 mb-1">@friend.Name</h5>
-                            </a>
-                            <!-- 网站介绍 -->
-                            <p class="card-text friend-introduce p-1 mb-2">
-                                @friend.Introduce
-                            </p>
-                        </div>
+                        <br/>
+                        <br/>
                     </div>
+
+                    <!--友链卡片-->
+                    @for (var i = 0; i < Model.Friends.Count; i++)
+                    {
+                        var friend = Model.Friends[i];
+                        <div class="col-sm-6 col-md-4">
+                            <div class="friend card mb-4 shadow d-none">
+                                <div class="py-2 w-100 @("color-" + i)"></div>
+                                <div class="position-relative h-100">
+                                    <div class="h-50 w-100 @("color-" + i) position-absolute text-white text-center">
+                                    </div>
+                                    <!-- 头像 -->
+                                    <div class="w-50 mx-auto position-relative">
+                                        <a href="@friend.Url" target="_blank">
+                                            <img class="card-img-top rounded-circle" onload="setColor(this, @i)" src="@friend.Avatar" onerror="avatarError(this)" crossOrigin="anonymous">
+                                        </a>
+                                    </div>
+                                </div>
+                                <!-- 友链信息 -->
+                                <div class="card-body text-center p-1">
+                                    <!-- 网站名 -->
+                                    <a href="@friend.Url" target="_blank">
+                                        <h5 class="card-title friend-name pt-1 pb-0 mb-1">@friend.Name</h5>
+                                    </a>
+                                    <!-- 网站介绍 -->
+                                    <p class="card-text friend-introduce p-1 mb-2">
+                                        @friend.Introduce
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
-            }
+            </div>
+            <!--申请-->
+            <div class="tab-pane fade" id="apply-tabpanel">
+                <!--正文-->
+                <div id="description" class="font-weight-normal">
+                    <!--加载动画-->
+                    <div class="progress-cover progress-cover-primary" id="progress-cover">
+                        <br />
+                        <br />
+                        <div class="progress progress-medium fluent-position">
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                            <span class="progress-span"></span>
+                        </div>
+                        <br />
+                        <br />
+                    </div>
+                    <!--正文-->
+                    <textarea style="display: none;">@Model.Notice</textarea>
+                </div>
+            </div>
         </div>
+    </div>
+</div>
+
+<!-- 评论区 -->
+<div class="card mb-4 shadow">
+    <div class="card-body">
+        <div id="vcomments" class="font-weight-normal"></div>
     </div>
 </div>
 
@@ -114,6 +171,7 @@
 @section BottomScripts{
     <script type="text/javascript">
         $(function() {
+            // 超出的文本省略
             $('.friend-introduce').each(function() {
                 $clamp(this, { clamp: 'auto' });
             });
@@ -122,6 +180,15 @@
             });
             $('.progress-cover').addClass('d-none');
             $('.friend').removeClass('d-none');
+            // 申请友链相关内容
+            var editormdView = editormd.markdownToHTML("description", {});
+            // 评论区
+            new Valine({
+                el: '#vcomments',
+                appId: '@ViewBag.Settings["LeanCloudAppID"]',
+                appKey: '@ViewBag.Settings["LeanCloudAppKey"]',
+                placeholder: '欢迎来申请友链哦'
+            });
         });
     </script>
 }

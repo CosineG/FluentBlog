@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FluentBlog.DataRepositories;
@@ -9,6 +10,7 @@ using FluentBlog.ViewModels;
 using FluentBlog.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using System.Text.Json;
 
 namespace FluentBlog.Controllers
 {
@@ -22,11 +24,13 @@ namespace FluentBlog.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFeedRepository _feedRepository;
         private readonly IFriendRepository _friendRepository;
+        private readonly IHttpClientFactory _clientFactory;
 
         public HomeController(IRelationshipRepository relationshipRepository, IMetaRepository metaRepository,
             IArchiveRepository archiveRepository, CustomUserManager customUserManager,
             ISettingRepository settingRepository, IHttpContextAccessor httpContextAccessor,
-            IFeedRepository feedRepository, IFriendRepository friendRepository) : base(settingRepository)
+            IFeedRepository feedRepository, IFriendRepository friendRepository, IHttpClientFactory clientFactory) :
+            base(settingRepository)
         {
             _metaRepository = metaRepository;
             _relationshipRepository = relationshipRepository;
@@ -36,6 +40,7 @@ namespace FluentBlog.Controllers
             _httpContextAccessor = httpContextAccessor;
             _feedRepository = feedRepository;
             _friendRepository = friendRepository;
+            _clientFactory = clientFactory;
         }
 
         // 首页
@@ -186,13 +191,42 @@ namespace FluentBlog.Controllers
                 Archive = archive,
                 Author = author,
                 DefaultTitleImage = _archiveRepository.GetDefaultTitleImage(),
-                Url = _httpContextAccessor.HttpContext?.Request?.GetDisplayUrl(),
+                Url = _httpContextAccessor.HttpContext?.Request.GetDisplayUrl(),
                 Categories = categories,
                 Tags = tags
             };
             ViewBag.Title = archive.Title + " - ";
             //将ViewModel对象传递给View()方法
             return View(archiveViewModel);
+        }
+
+        // 更新评论数
+        [HttpGet]
+        public JsonResult UpdateCommentsCount(string url)
+        {
+            var settings = _settingRepository.GetSettings();
+            // 请求获取评论数
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                "/1.1/classes/Comment?where={\"url\":\"" + url + "\"}&count=1&limit=0");
+            var client = _clientFactory.CreateClient("leanCloudClient");
+            client.BaseAddress = new Uri(settings["LeanCloudAPIUrl"]);
+            client.DefaultRequestHeaders.Add("X-LC-Id", settings["LeanCloudAppID"]);
+            client.DefaultRequestHeaders.Add("X-LC-Key", settings["LeanCloudAppKey"]);
+            var response = client.SendAsync(request);
+            var resultString = response.Result.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<Dictionary<string, dynamic>>(resultString.Result);
+
+            // 更新至数据库
+            string[] urlSplit = url.Split('/');
+            if (result != null && string.Equals(urlSplit[^2], "archive", StringComparison.CurrentCultureIgnoreCase))
+            {
+                Archive archive = _archiveRepository.GetArchiveById(Convert.ToInt32(urlSplit.Last()));
+                archive.CommentsNum = Convert.ToInt32(result["count"].ToString());
+                _archiveRepository.Update(archive);
+                return Json(archive.CommentsNum);
+            }
+
+            return Json(-1);
         }
 
         // 动态
@@ -230,6 +264,7 @@ namespace FluentBlog.Controllers
                 Feeds = feeds,
                 Authors = authors
             };
+            ViewBag.Title = "动态" + " - ";
             return View(feedViewModel);
         }
 
@@ -314,7 +349,8 @@ namespace FluentBlog.Controllers
             FriendViewModel friendViewModel = new FriendViewModel
             {
                 FriendsCount = friendsCount,
-                Friends = friends
+                Friends = friends,
+                Notice = _settingRepository.GetSettings()["ApplyFriendNotice"]
             };
             ViewBag.Title = "友情链接" + " - ";
             return View(friendViewModel);

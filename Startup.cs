@@ -59,6 +59,7 @@ namespace FluentBlog
             services.AddScoped<ISettingRepository, SqlSettingRepository>();
             services.AddDistributedMemoryCache();
             services.AddSession();
+            services.AddHttpClient("leanCloudClient");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -71,6 +72,7 @@ namespace FluentBlog
             {
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
+
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseSession();
