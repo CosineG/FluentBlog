@@ -1,0 +1,82 @@
+@using Microsoft.AspNetCore.Http
+@model FluentBlog.ViewModels.LoginViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>@(ViewBag.Title + ViewBag.Settings["BlogName"])</title>
+    <meta name="viewport" content="width=device-width"/>
+    <link href="~/css/reset.css" rel="stylesheet"/>
+
+    <environment include="Development">
+        <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet"/>
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <link rel="stylesheet"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+              integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+              crossorigin="anonymous"
+              asp-fallback-href="~/lib/twitter-bootstrap/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only"
+              asp-fallback-test-property="position"
+              asp-fallback-test-value="absolute"
+              asp-suppress-fallback-integrity="true"/>
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+    </environment>
+
+    <link href="~/lib/FDBootstrap/css/fluent.css" rel="stylesheet"/>
+    <link href="~/lib/micon/css/micon.min.css" rel="stylesheet"/>
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true"/>
+</head>
+<body>
+<div class="min-vh-100 flex-center" style="background-image: url(/images/backround.svg); background-attachment: fixed">
+    <div class="card mb-4 shadow m-auto w-25">
+        <!-- 登录失败警告 -->
+        @if (Model != null && Model.LastLoginFailed)
+        {
+            <div class="alert alert-danger" role="alert">
+                登录失败，请检查邮箱和密码后再试
+            </div>
+        }
+        <!-- 主体 -->
+        <div class="card-body">
+            <!-- 标题 -->
+            <h3 class="card-title font-weight-bold mb-2">
+                登录
+            </h3>
+            <hr>
+
+            <!-- form -->
+            <form method="post">
+                <div class="form-group">
+                    <label asp-for="Email">邮箱</label>
+                    <input asp-for="Email" class="form-control" placeholder="请输入邮箱">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password">密码</label>
+                    <input asp-for="Password" class="form-control" placeholder="请输入密码">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <div class="form-check p-0">
+                        <input class="form-check-input" type="checkbox" asp-for="RememberMe">
+                        <label class="form-check-label" asp-for="RememberMe">
+                            记住我
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary ml-0">登录</button>
+                <a class="btn btn-secondary ml-0" href="javascript:history.back()">返回</a>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

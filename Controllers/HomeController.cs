@@ -11,6 +11,7 @@ using FluentBlog.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace FluentBlog.Controllers
 {
@@ -19,7 +20,7 @@ namespace FluentBlog.Controllers
         private readonly IRelationshipRepository _relationshipRepository;
         private readonly IMetaRepository _metaRepository;
         private readonly IArchiveRepository _archiveRepository;
-        private readonly CustomUserManager _customUserManager;
+        private readonly UserManager<User> _userManager;
         private readonly ISettingRepository _settingRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IFeedRepository _feedRepository;
@@ -27,7 +28,7 @@ namespace FluentBlog.Controllers
         private readonly IHttpClientFactory _clientFactory;
 
         public HomeController(IRelationshipRepository relationshipRepository, IMetaRepository metaRepository,
-            IArchiveRepository archiveRepository, CustomUserManager customUserManager,
+            IArchiveRepository archiveRepository, UserManager<User> userManager,
             ISettingRepository settingRepository, IHttpContextAccessor httpContextAccessor,
             IFeedRepository feedRepository, IFriendRepository friendRepository, IHttpClientFactory clientFactory) :
             base(settingRepository)
@@ -35,7 +36,7 @@ namespace FluentBlog.Controllers
             _metaRepository = metaRepository;
             _relationshipRepository = relationshipRepository;
             _archiveRepository = archiveRepository;
-            _customUserManager = customUserManager;
+            _userManager = userManager;
             _settingRepository = settingRepository;
             _httpContextAccessor = httpContextAccessor;
             _feedRepository = feedRepository;
@@ -79,7 +80,7 @@ namespace FluentBlog.Controllers
                         archive.TitleImage = _archiveRepository.GetDefaultTitleImage();
                     }
 
-                    authors.Add(_customUserManager.GetUserById(archive.Uid));
+                    authors.Add(_userManager.FindByIdAsync(archive.Uid).Result);
                     categories.Add(_relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Category));
                 }
 
@@ -130,7 +131,7 @@ namespace FluentBlog.Controllers
                         archive.TitleImage = _archiveRepository.GetDefaultTitleImage();
                     }
 
-                    authors.Add(_customUserManager.GetUserById(archive.Uid));
+                    authors.Add(_userManager.FindByIdAsync(archive.Uid).Result);
                     categories.Add(_relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Category));
                 }
 
@@ -182,7 +183,7 @@ namespace FluentBlog.Controllers
             }
 
             // 查询作者
-            User author = _customUserManager.GetUserById(archive.Uid);
+            User author = _userManager.FindByIdAsync(archive.Uid).Result;
             List<Meta> categories = _relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Category);
             List<Meta> tags = _relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Tag);
 
@@ -239,7 +240,7 @@ namespace FluentBlog.Controllers
                 return Content("");
             }
 
-            List<User> authors = feeds.Select(feed => _customUserManager.GetUserById(feed.Uid)).ToList();
+            List<User> authors = feeds.Select(feed => _userManager.FindByIdAsync(feed.Uid).Result).ToList();
             List<bool> likedList = new List<bool>();
             foreach (var feed in feeds)
             {

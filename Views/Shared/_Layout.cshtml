@@ -69,9 +69,7 @@
             border-color: #8f8f8f !important;
         }
 
-        .square{
-            border-radius: 0;
-            }
+        .square { border-radius: 0; }
     </style>
 
 </head>
@@ -79,7 +77,7 @@
 <header id="top"></header>
 <div class="container-fluid m-0">
     <!-- 主体 -->
-    <div class="row" id="background">
+    <div class="row" id="background" style="background-image: url(/images/backround.svg); background-attachment: fixed">
         <!-- 页首（小屏） -->
         <div class="col-12 d-md-none d-block p-0">
             <div class="bg-white text-dark text-center shadow p-3">
@@ -159,11 +157,13 @@
         <div class="col-md-1 d-md-block d-none fixed-bottom ml-auto">
             <div class="btn-group-vertical m-0">
                 <!-- 后台管理 -->
-                <button type="button" class="btn toolbar bg-white shadow p-1" data-toggle="tooltip" data-placement="left" title="后台管理">
+                <a type="button" class="btn toolbar bg-white shadow flex-center p-1" data-toggle="tooltip" data-placement="left" title="后台管理"
+                   asp-controller="Admin" asp-action="Index">
                     <i class="mi mi-Settings mi-lg"></i>
-                </button>
+                </a>
                 <!-- 返回顶部 -->
-                <button type="button" class="btn toolbar bg-white shadow p-1" data-toggle="tooltip" data-placement="left" title="返回顶部" onclick="location.href = '#top'">
+                <button type="button" class="btn toolbar bg-white shadow p-1" data-toggle="tooltip" data-placement="left" title="返回顶部"
+                        onclick="location.href = '#top'">
                     <i class="mi mi-ChevronUp mi-lg"></i>
                 </button>
             </div>

@@ -44,12 +44,19 @@ namespace FluentBlog
             });
             // 用户验证服务
             services.AddIdentity<User, IdentityRole>()
-                .AddUserManager<CustomUserManager>()
+                .AddUserManager<UserManager<User>>()
                 .AddErrorDescriber<CustomIdentityErrorDescriberZhHans>()
-                .AddEntityFrameworkStores<AppDbContext>();
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/admin/login";
+            });
             services.AddControllersWithViews(a => a.EnableEndpointRouting = false)
                 .AddXmlSerializerFormatters()
-                .AddJsonOptions(option => { });
+                .AddJsonOptions(option => { })
+                // Razor页面实时编译，方便调试
+                .AddRazorRuntimeCompilation();
             // 依赖注入仓储
             services.AddScoped<IMetaRepository, SqlMetaRepository>();
             services.AddScoped<IArchiveRepository, SqlArchiveRepository>();
@@ -75,6 +82,7 @@ namespace FluentBlog
 
             app.UseStaticFiles();
             app.UseAuthentication();
+            app.UseAuthorization();
             app.UseSession();
             app.UseMvcWithDefaultRoute();
         }

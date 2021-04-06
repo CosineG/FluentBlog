@@ -8,18 +8,19 @@ using FluentBlog.DataRepositories;
 using FluentBlog.Models;
 using Microsoft.AspNetCore.Http;
 using FluentBlog.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace FluentBlog.ViewComponents
 {
     public class FeedBlockViewComponent : ViewComponent
     {
         private readonly IFeedRepository _feedRepository;
-        private readonly CustomUserManager _customUserManager;
+        private readonly UserManager<User> _userManager;
 
-        public FeedBlockViewComponent(IFeedRepository feedRepository, CustomUserManager customUserManager)
+        public FeedBlockViewComponent(IFeedRepository feedRepository, UserManager<User> userManager)
         {
             _feedRepository = feedRepository;
-            _customUserManager = customUserManager;
+            _userManager = userManager;
         }
 
         public IViewComponentResult Invoke()
@@ -44,7 +45,7 @@ namespace FluentBlog.ViewComponents
             }
             likedList.Add(liked);
             feeds.Add(lastFeed);
-            authors.Add(_customUserManager.GetUserById(lastFeed.Uid));
+            authors.Add(_userManager.FindByIdAsync(lastFeed.Uid).Result);
             FeedViewModel feedViewModel = new FeedViewModel
             {
                 LikedList = likedList,
