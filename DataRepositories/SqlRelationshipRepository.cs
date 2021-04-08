@@ -23,6 +23,21 @@ namespace FluentBlog.DataRepositories
             return relationship;
         }
 
+        // 改
+        public List<Relationship> Update(int aid, List<int> mids)
+        {
+            Delete(null, aid);
+            List<Relationship> relationships = new List<Relationship>();
+            foreach (var relationship in mids.Select(mid => new Relationship {Aid = aid, Mid = mid}))
+            {
+                relationships.Add(relationship);
+                _context.Relationships.Add(relationship);
+            }
+
+            _context.SaveChanges();
+            return relationships;
+        }
+
         // 删
         public bool Delete(int? mid = null, int? aid = null)
         {
@@ -76,7 +91,8 @@ namespace FluentBlog.DataRepositories
                 MetaType.Category => metaIdList.Select(mid => _context.Metas.Find(mid))
                     .Where(m => m.Type.Equals("category")).ToList(),
                 // 标签
-                MetaType.Tag => metaIdList.Select(mid => _context.Metas.Find(mid)).Where(m => m.Type.Equals("tag")).ToList(),
+                MetaType.Tag => metaIdList.Select(mid => _context.Metas.Find(mid)).Where(m => m.Type.Equals("tag"))
+                    .ToList(),
                 // 全部
                 _ => metaIdList.Select(mid => _context.Metas.Find(mid)).ToList()
             };

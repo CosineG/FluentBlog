@@ -12,7 +12,7 @@ namespace FluentBlog.DataRepositories
         // 增
         Archive Insert(Archive archive);
         // 删
-        bool Delete(int id);
+        bool Delete(int aid);
         // 改
         Archive Update(Archive updateArchive);
         // 查
@@ -31,5 +31,7 @@ namespace FluentBlog.DataRepositories
         string MarkdownToPlainText(string content);
         // 增加浏览次数
         Archive AddViewsCount(Archive archive);
+        // 获得最小的可用ID
+        int GetMinAvailableId();
     }
 }

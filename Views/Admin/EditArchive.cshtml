@@ -1,0 +1,107 @@
+@{
+    Layout = "_AdminLayout";
+    List<Meta> allCategories = ViewBag.AllCategories;
+    List<Meta> allTags = ViewBag.AllTags;
+}
+@model FluentBlog.ViewModels.EditArchiveViewModel
+
+@section HeadScripts{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.min.css"/>
+        <script src="~/lib/editor.md/editormd.min.js"></script>
+        <script src="~/lib/editor.md/lib/marked.min.js"></script>
+        <script src="~/lib/editor.md/lib/prettify.min.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css"/>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
+    </environment>
+}
+
+<!-- 主体 -->
+<div class="card-body">
+    <!-- 标题 -->
+    <h3 class="card-title font-weight-bold my-2">
+        写文章
+    </h3>
+    <hr>
+    <form class="row" method="post">
+        <div class="col-9">
+            <input class="form-control font-weight-bold" type="text" asp-for="Archive.Title" placeholder="标题" value="@Model?.Archive.Title">
+            <!-- 文章隐藏的信息 -->
+            <input type="hidden" asp-for="Archive.Aid" value="@(Model?.Archive.Aid ?? 0)" />
+            <input type="hidden" asp-for="Archive.Views" value="@(Model?.Archive.Views ?? 0)" />
+            <input type="hidden" asp-for="Archive.CommentsNum" value="@(Model?.Archive.CommentsNum ?? 0)" />
+            <input type="hidden" asp-for="Archive.Created" value="@(Model?.Archive.Created)" />
+            <input type="hidden" asp-for="Archive.Uid" value="@(Model?.Archive.Uid)" />
+            <br />
+            <!-- markdown编辑器 -->
+            <div id="editor">
+                <textarea style="display: none;">@Model?.Archive.Text</textarea>
+            </div>
+            <button class="btn btn-primary m-0" type="submit">提交</button>
+        </div>
+        <div class="col">
+            <h5 class="font-weight-bold">标题图地址</h5>
+            <div class="form-group p-0">
+                <textarea class="form-control small" rows="2" asp-for="Archive.TitleImage" placeholder="留空则为默认随机图">
+                    @Model?.Archive.TitleImage
+                </textarea>
+            </div>
+            <hr/>
+            <h5 class="font-weight-bold">分类</h5>
+            <ul>
+                @for (var i = 0; i < allCategories.Count; i++)
+                {
+                    <li class="d-inline-block mr-2">       
+                        <input class="form-check-input" type="checkbox" asp-for="Categories[allCategories[i].Mid]">
+                        <label class="form-check-label" asp-for="Categories[allCategories[i].Mid]">
+                            @allCategories[i].Name
+                        </label>
+                    </li>
+                }
+            </ul>
+            <hr/>
+            <h5 class="font-weight-bold">标签</h5>
+            <ul>
+                @for (var i = 0; i < allTags.Count; i++)
+                {
+                <li class="d-inline-block mr-2">
+                    <input class="form-check-input" type="checkbox" asp-for="Tags[allTags[i].Mid]">
+                    <label class="form-check-label" asp-for="Tags[allTags[i].Mid]">
+                        @allTags[i].Name
+                    </label>
+                </li>
+                }
+            </ul>
+        </div>
+    </form>
+</div>
+
+@section BottomScripts{
+    <script type="text/javascript">
+        $(function() {
+            var editor = editormd("editor",
+                {
+                    height: "640px",
+                    tocm: true,
+                    toolbarIcons: function() {
+                        return [
+                            "undo", "redo", "|",
+                            "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|",
+                            "h1", "h2", "h3", "h4", "h5", "h6", "|",
+                            "list-ul", "list-ol", "hr", "|",
+                            "link", "reference-link", "image", "code", "preformatted-text",
+                            "code-block", "table", "datetime", "html-entities", "pagebreak", "|",
+                            "goto-line", "watch", "preview", "clear", "search", "|",
+                            "info", "releaseIcon", "index"
+                        ];
+                    },
+                    path: "/lib/editor.md/lib/" // Autoload modules mode, codemirror, marked... dependents libs path
+                });
+        });
+    </script>
+}

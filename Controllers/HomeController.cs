@@ -328,8 +328,8 @@ namespace FluentBlog.Controllers
             }
 
             // 获得所有分类/标签以及其下的文章数目
-            Tuple<List<Meta>, List<int>> categories = _metaRepository.GetMetasAndCountIncluded(0);
-            Tuple<List<Meta>, List<int>> tags = _metaRepository.GetMetasAndCountIncluded(1);
+            Tuple<List<Meta>, List<int>> categories = _metaRepository.GetMetasAndCountIncluded(MetaType.Category);
+            Tuple<List<Meta>, List<int>> tags = _metaRepository.GetMetasAndCountIncluded(MetaType.Tag);
             FilingViewModel filingViewModel = new FilingViewModel
             {
                 Count = new Tuple<int, int, int>(archiveCount, categoryCount, tagCount),

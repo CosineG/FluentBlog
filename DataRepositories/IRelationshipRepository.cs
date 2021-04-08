@@ -11,6 +11,8 @@ namespace FluentBlog.DataRepositories
     {
         // 增
         Relationship Insert(Relationship meta);
+        // 改
+        List<Relationship> Update(int aid, List<int> mids);
         // 删
         bool Delete(int? mid = null, int? aid = null);
         // 查询分类/标签下的所有文章

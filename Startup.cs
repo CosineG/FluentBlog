@@ -67,6 +67,7 @@ namespace FluentBlog
             services.AddDistributedMemoryCache();
             services.AddSession();
             services.AddHttpClient("leanCloudClient");
+            services.AddRouting(options => options.LowercaseUrls = true);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

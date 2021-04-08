@@ -30,13 +30,21 @@
     <link href="~/lib/micon/css/micon.min.css" rel="stylesheet"/>
     <link href="~/css/site.css" rel="stylesheet" asp-append-version="true"/>
 
+    <script>
+        function changeSidebarHeight() {
+            var windowHeight = $(window).height();
+            var sidebarHeight = $('#sidebar').height();
+            $('#sidebar').css('top', windowHeight / 2 - sidebarHeight / 2);
+        };
+    </script>
+
     @if (IsSectionDefined("HeadScripts"))
     {
         @await RenderSectionAsync("HeadScripts", required: false)
     }
 
     <style>
-        #sidebar { top: 8rem; }
+        #sidebar { opacity: 0 }
 
         #avator {
             width: 60%;
@@ -98,25 +106,29 @@
                 </div>
                 <!-- 按钮 -->
                 <div class="py-4 border-top">
-                    <a class="btn btn-block mx-0 shadow-none nav-btn square" asp-controller="Home" asp-action="Index" asp-route-slug="@null" asp-route-page="">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn square" data-ajax-update="#content" data-ajax="true" asp-controller="Home" asp-action="Index" asp-route-slug="@null" asp-route-page="">
                         <i class="mi mi-Home"></i>
                         首页
                     </a>
-                    <a class="btn btn-block mx-0 shadow-none nav-btn square" asp-controller="Home" asp-action="Filing">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn square" data-ajax-update="#content" data-ajax="true" asp-controller="Home" asp-action="Filing">
                         <i class="mi mi-Folder"></i>
                         归档
                     </a>
-                    <a class="btn btn-block mx-0 shadow-none nav-btn square" asp-controller="Home" asp-action="Friend">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn square" data-ajax-update="#content" data-ajax="true" asp-controller="Home" asp-action="Friend">
                         <i class="mi mi-Link"></i>
                         友链
                     </a>
-                    <a class="btn btn-block mx-0 shadow-none nav-btn square" asp-controller="Home" asp-action="About">
+                    <a class="btn btn-block mx-0 shadow-none nav-btn square" data-ajax-update="#content" data-ajax="true" asp-controller="Home" asp-action="About">
                         <i class="mi mi-Info"></i>
                         关于
                     </a>
                 </div>
             </div>
         </div>
+        <script>
+            changeSidebarHeight();
+            $('#sidebar').css('opacity', 1);
+        </script>
         <div class="col-md-8">
             <div class="row">
                 <!-- 文章卡片区 -->
@@ -173,16 +185,16 @@
 
 <script>
     $(function() {
+        changeSidebarHeight();
+        $(window).resize(changeSidebarHeight);
         // 初始化Tooltip
         $('[data-toggle="tooltip"]').tooltip();
         $('.nav-btn').hover(
             function() {
-                $(this).addClass('bg-gray');
-                $(this).addClass('text-white');
+                $(this).addClass('bg-gray text-white');
             },
             function() {
-                $(this).removeClass('bg-gray');
-                $(this).removeClass('text-white');
+                $(this).removeClass('bg-gray text-white');
             }
         );
     });

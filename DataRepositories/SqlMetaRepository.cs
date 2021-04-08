@@ -3,6 +3,7 @@ using FluentBlog.Infrastructure;
 using FluentBlog.Models;
 using System.Collections.Generic;
 using System.Linq;
+using FluentBlog.Enum;
 
 namespace FluentBlog.DataRepositories
 {
@@ -60,12 +61,12 @@ namespace FluentBlog.DataRepositories
         }
 
         // 获得所有分类/标签以及其下的文章数目
-        public Tuple<List<Meta>, List<int>> GetMetasAndCountIncluded(int? type)
+        public Tuple<List<Meta>, List<int>> GetMetasAndCountIncluded(MetaType type)
         {
             List<Meta> metas = type switch
             {
-                0 => _context.Metas.Where(m => m.Type == "category").ToList(),
-                1 => _context.Metas.Where(m => m.Type == "tag").ToList(),
+                MetaType.Category => _context.Metas.Where(m => m.Type == "category").ToList(),
+                MetaType.Tag => _context.Metas.Where(m => m.Type == "tag").ToList(),
                 _ => _context.Metas.ToList()
             };
             List<int> counts = metas.Select(meta => GetArchiveOfMetaCount(meta.Mid)).ToList();
@@ -76,6 +77,12 @@ namespace FluentBlog.DataRepositories
         public Meta GetMetaBySlug(string slug)
         {
             return _context.Metas.FirstOrDefault(m => m.Slug.Equals(slug));
+        }
+
+        // 获得默认分类
+        public Meta GetDefaultCategory()
+        {
+            return _context.Metas.FirstOrDefault(m => m.Default.Equals(true));
         }
 
         // 查询分类/标签下的文章数目

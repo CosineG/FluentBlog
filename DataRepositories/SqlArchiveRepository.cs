@@ -76,7 +76,8 @@ namespace FluentBlog.DataRepositories
             count = count > 5 ? 5 : count;
             return rule switch
             {
-                TopArchiveRule.Comment => _context.Archives.OrderByDescending(a => a.CommentsNum).Take(count).ToList(),
+                TopArchiveRule.Comment => _context.Archives.OrderByDescending(a => a.CommentsNum)
+                    .Take(count).ToList(),
                 _ => _context.Archives.OrderByDescending(a => a.Views).Take(count).ToList()
             };
         }
@@ -140,7 +141,9 @@ namespace FluentBlog.DataRepositories
                 //全局匹配空字符
                 @"\s/g"
             };
-            return patterns.Aggregate(content, (current, pattern) => Regex.Replace(current, pattern, ""));
+            string summary = patterns.Aggregate(content, (current, pattern) => Regex.Replace(current, pattern, ""));
+            if (summary == string.Empty) summary = "暂无可预览内容，请阅读全文";
+            return summary;
         }
 
         // 增加浏览次数
@@ -149,6 +152,14 @@ namespace FluentBlog.DataRepositories
             archive.Views += 1;
             Update(archive);
             return archive;
+        }
+
+        // 获得最小的可用ID
+        public int GetMinAvailableId()
+        {
+            return Enumerable.Range(1, int.MaxValue)
+                .Except(_context.Archives.Select(a => a.Aid))
+                .FirstOrDefault();
         }
     }
 }
