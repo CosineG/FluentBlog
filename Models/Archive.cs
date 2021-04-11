@@ -14,7 +14,7 @@ namespace FluentBlog.Models
         [Key]
         public int Aid { get; set; }
         // 标题
-        [Required]
+        [Required(ErrorMessage = "必须输入标题")]
         public string Title { get; set; }
         // 创建时间
         [Required]

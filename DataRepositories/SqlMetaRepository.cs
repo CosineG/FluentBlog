@@ -73,6 +73,12 @@ namespace FluentBlog.DataRepositories
             return new Tuple<List<Meta>, List<int>>(metas, counts);
         }
 
+        // 用id查询分类/标签
+        public Meta GetMetaById(int mid)
+        {
+            return _context.Metas.FirstOrDefault(m => m.Mid.Equals(mid));
+        }
+
         // 用slug查询分类/标签
         public Meta GetMetaBySlug(string slug)
         {
@@ -105,6 +111,15 @@ namespace FluentBlog.DataRepositories
 
             return archives.OrderByDescending(a => a.Aid).Skip(skipNum).Take(archivesCountPerPage)
                 .ToList();
+        }
+
+        // 检查唯一性
+        public bool CheckUnique(Meta meta)
+        {
+            return !(_context.Metas.Where(m => m.Mid != meta.Mid).Any(m =>
+                         string.Equals(m.Name, meta.Name, StringComparison.CurrentCultureIgnoreCase)) ||
+                     _context.Metas.Where(m => m.Mid != meta.Mid).Any(m =>
+                         string.Equals(m.Slug, meta.Slug, StringComparison.CurrentCultureIgnoreCase)));
         }
     }
 }

@@ -1,15 +1,14 @@
+using FluentBlog.DataRepositories;
+using FluentBlog.Enum;
+using FluentBlog.Models;
+using FluentBlog.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentBlog.Controllers;
-using FluentBlog.DataRepositories;
-using FluentBlog.Models;
-using FluentBlog.ViewModels;
-using FluentBlog.Enum;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 namespace FluentBlog.Controllers
 {
@@ -18,15 +17,18 @@ namespace FluentBlog.Controllers
     {
         private readonly ISettingRepository _settingRepository;
         private readonly IArchiveRepository _archiveRepository;
+        private readonly IFeedRepository _feedRepository;
         private readonly IRelationshipRepository _relationshipRepository;
         private readonly IMetaRepository _metaRepository;
+        private readonly IFriendRepository _friendRepository;
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
 
         public AdminController(IRelationshipRepository relationshipRepository, IMetaRepository metaRepository,
-            ISettingRepository settingRepository, IArchiveRepository archiveRepository,
-            UserManager<User> userManager, SignInManager<User> signInManager) : base(settingRepository)
+            ISettingRepository settingRepository, IArchiveRepository archiveRepository, IFeedRepository feedRepository,
+            IFriendRepository friendRepository, UserManager<User> userManager, SignInManager<User> signInManager) :
+            base(settingRepository)
         {
             _metaRepository = metaRepository;
             _relationshipRepository = relationshipRepository;
@@ -34,9 +36,13 @@ namespace FluentBlog.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _archiveRepository = archiveRepository;
+            _feedRepository = feedRepository;
+            _friendRepository = friendRepository;
         }
 
-        // 登录页面
+        /// <summary>
+        /// 登录页面
+        /// </summary>
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login()
@@ -45,7 +51,9 @@ namespace FluentBlog.Controllers
             return View();
         }
 
-        // 登录操作
+        /// <summary>
+        /// 登录操作
+        /// </summary>
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
@@ -72,6 +80,9 @@ namespace FluentBlog.Controllers
             return Redirect(returnUrl);
         }
 
+        /// <summary>
+        /// 控制台首页
+        /// </summary>
         [HttpGet]
         public IActionResult Index()
         {
@@ -79,6 +90,9 @@ namespace FluentBlog.Controllers
             return View();
         }
 
+        /// <summary>
+        /// 文章编辑页面
+        /// </summary>
         [HttpGet]
         [Route("[controller]/[action]/{aid?}")]
         public IActionResult EditArchive(int? aid)
@@ -116,6 +130,9 @@ namespace FluentBlog.Controllers
             return View(editArchiveViewModel);
         }
 
+        /// <summary>
+        /// 编辑文章
+        /// </summary>
         [HttpPost]
         public IActionResult EditArchive(EditArchiveViewModel model, [FromForm(Name = "editor-markdown-doc")]
             string text)
@@ -152,7 +169,222 @@ namespace FluentBlog.Controllers
 
             _relationshipRepository.Update(archive.Aid, metas);
 
-            return Json(archive);
+            return RedirectToAction("Manage", "Admin", new {manageItemType = "archive"});
+        }
+
+
+        /// <summary>
+        /// 管理页面
+        /// </summary>
+        [HttpGet]
+        [Route("[controller]/[action]/{manageItemType}")]
+        public IActionResult Manage(string manageItemType)
+        {
+            ManageItemType itemType;
+            try
+            {
+                itemType = (ManageItemType) System.Enum.Parse(typeof(ManageItemType), manageItemType, true);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+
+            ManageViewModel manageViewModel = new ManageViewModel();
+            switch (itemType)
+            {
+                // 文章
+                case ManageItemType.Archive:
+                    List<Archive> archives = _archiveRepository.GetAllArchives();
+                    List<User> archivesAuthors = new List<User>();
+                    List<List<Meta>> archivesCategories = new List<List<Meta>>();
+                    foreach (var archive in archives)
+                    {
+                        archivesAuthors.Add(_userManager.FindByIdAsync(archive.Uid).Result);
+                        archivesCategories.Add(
+                            _relationshipRepository.GetMetasByArchiveId(archive.Aid, MetaType.Category));
+                    }
+
+                    manageViewModel = new ManageViewModel
+                    {
+                        Archives = archives,
+                        Authors = archivesAuthors,
+                        ArchivesCategories = archivesCategories
+                    };
+                    ViewBag.Title = "管理文章" + " - ";
+                    break;
+                // 分类
+                case ManageItemType.Category:
+                    var categories = _metaRepository.GetMetasAndCountIncluded(MetaType.Category);
+                    manageViewModel = new ManageViewModel
+                    {
+                        Metas = categories.Item1,
+                        MetasCounts = categories.Item2
+                    };
+                    ViewBag.Title = "管理分类" + " - ";
+                    break;
+                // 标签
+                case ManageItemType.Tag:
+                    var tags = _metaRepository.GetMetasAndCountIncluded(MetaType.Tag);
+                    manageViewModel = new ManageViewModel
+                    {
+                        Metas = tags.Item1,
+                        MetasCounts = tags.Item2
+                    };
+                    ViewBag.Title = "管理标签" + " - ";
+                    break;
+                // 动态
+                case ManageItemType.Feed:
+                    List<Feed> feeds = _feedRepository.GetAllFeeds();
+                    List<User> feedsAuthors =
+                        feeds.Select(feed => _userManager.FindByIdAsync(feed.Uid).Result).ToList();
+
+                    manageViewModel = new ManageViewModel
+                    {
+                        Feeds = feeds,
+                        Authors = feedsAuthors,
+                    };
+                    ViewBag.Title = "管理动态" + " - ";
+                    break;
+                // 友链
+                case ManageItemType.Friend:
+                    var friends = _friendRepository.GetAllFriends();
+                    manageViewModel = new ManageViewModel
+                    {
+                        Friends = friends
+                    };
+                    ViewBag.Title = "管理友链" + " - ";
+                    break;
+            }
+
+            manageViewModel.ManageItemType = itemType;
+            return View(manageViewModel);
+        }
+
+
+        /// <summary>
+        /// 添加操作
+        /// </summary>
+        [HttpPost]
+        public string Insert(ModalViewModel modalViewModel)
+        {
+            switch (modalViewModel.ManageItemType)
+            {
+                // 分类和标签
+                case ManageItemType.Category:
+                case ManageItemType.Tag:
+                    ModelState.Remove("SelectedMeta.Mid");
+                    if (ModelState.IsValid && _metaRepository.CheckUnique(modalViewModel.SelectedMeta))
+                    {
+                        _metaRepository.Insert(modalViewModel.SelectedMeta);
+                        return "ok";
+                    }
+                    else
+                    {
+                        return "添加失败，名称或缩略名不能重复";
+                    }
+                // 动态
+                case ManageItemType.Feed:
+                    modalViewModel.SelectedFeed.Uid = _userManager.GetUserAsync(HttpContext.User).Result.Id;
+                    modalViewModel.SelectedFeed.Created = DateTime.Now;
+                    ModelState.Remove("SelectedFeed.Fid");
+                    ModelState.Remove("SelectedFeed.Uid");
+                    ModelState.Remove("SelectedFeed.Created");
+                    if (ModelState.IsValid)
+                    {
+                        _feedRepository.Insert(modalViewModel.SelectedFeed);
+                        return "ok";
+                    }
+                    else
+                    {
+                        return "添加失败，请检查内容是否有误";
+                    }
+                // 友链
+                case ManageItemType.Friend:
+                    ModelState.Remove("SelectedFriend.Fid");
+                    if (ModelState.IsValid)
+                    {
+                        _friendRepository.Insert(modalViewModel.SelectedFriend);
+                        return "ok";
+                    }
+                    else
+                    {
+                        return "添加失败，请检查内容是否有误";
+                    }
+            }
+
+            return "未知错误，请重试";
+        }
+
+        /// <summary>
+        /// 修改操作
+        /// </summary>
+        [HttpPost]
+        public string Update(ModalViewModel modalViewModel)
+        {
+            switch (modalViewModel.ManageItemType)
+            {
+                case ManageItemType.Category:
+                case ManageItemType.Tag:
+                    if (ModelState.IsValid && _metaRepository.CheckUnique(modalViewModel.SelectedMeta))
+                    {
+                        _metaRepository.Update(modalViewModel.SelectedMeta);
+                        return "ok";
+                    }
+                    else
+                    {
+                        return "修改失败，名称或缩略名不能重复";
+                    }
+                case ManageItemType.Feed:
+                    if (ModelState.IsValid)
+                    {
+                        _feedRepository.Update(modalViewModel.SelectedFeed);
+                        return "ok";
+                    }
+                    else
+                    {
+                        return "修改失败，请检查内容是否有误";
+                    }
+                case ManageItemType.Friend:
+                    if (ModelState.IsValid)
+                    {
+                        _friendRepository.Update(modalViewModel.SelectedFriend);
+                        return "ok";
+                    }
+                    else
+                    {
+                        return "修改失败，请检查内容是否有误";
+                    }
+            }
+
+            return "未知错误，请重试";
+        }
+
+        /// <summary>
+        /// 显示编辑窗口
+        /// </summary>
+        [HttpPost]
+        public IActionResult ShowModal([FromBody] Dictionary<string, int> inputModel)
+        {
+            ModalViewModel modalViewModel = new ModalViewModel
+                {ManageItemType = (ManageItemType) inputModel["manageItemType"], OperateType = OperateType.Insert};
+            if (inputModel["id"] == 0) return ViewComponent("ManageModal", new {modalViewModel = modalViewModel});
+            switch ((ManageItemType) inputModel["manageItemType"])
+            {
+                case ManageItemType.Category:
+                case ManageItemType.Tag:
+                    modalViewModel.SelectedMeta = _metaRepository.GetMetaById(inputModel["id"]);
+                    break;
+                case ManageItemType.Feed:
+                    modalViewModel.SelectedFeed = _feedRepository.GetFeedById(inputModel["id"]);
+                    break;
+                case ManageItemType.Friend:
+                    modalViewModel.SelectedFriend = _friendRepository.GetFriendById(inputModel["id"]);
+                    break;
+            }
+
+            modalViewModel.OperateType = OperateType.Update;
+            return ViewComponent("ManageModal", new {modalViewModel = modalViewModel});
         }
     }
 }

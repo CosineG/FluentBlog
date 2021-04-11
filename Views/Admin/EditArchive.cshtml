@@ -30,13 +30,13 @@
     <hr>
     <form class="row" method="post">
         <div class="col-9">
-            <input class="form-control font-weight-bold" type="text" asp-for="Archive.Title" placeholder="标题" value="@Model?.Archive.Title">
+            <input class="form-control font-weight-bold" type="text" asp-for="Archive.Title" placeholder="标题">
             <!-- 文章隐藏的信息 -->
-            <input type="hidden" asp-for="Archive.Aid" value="@(Model?.Archive.Aid ?? 0)" />
-            <input type="hidden" asp-for="Archive.Views" value="@(Model?.Archive.Views ?? 0)" />
-            <input type="hidden" asp-for="Archive.CommentsNum" value="@(Model?.Archive.CommentsNum ?? 0)" />
-            <input type="hidden" asp-for="Archive.Created" value="@(Model?.Archive.Created)" />
-            <input type="hidden" asp-for="Archive.Uid" value="@(Model?.Archive.Uid)" />
+            <input type="hidden" asp-for="Archive.Aid"/>
+            <input type="hidden" asp-for="Archive.Views"/>
+            <input type="hidden" asp-for="Archive.CommentsNum"/>
+            <input type="hidden" asp-for="Archive.Created"/>
+            <input type="hidden" asp-for="Archive.Uid"/>
             <br />
             <!-- markdown编辑器 -->
             <div id="editor">

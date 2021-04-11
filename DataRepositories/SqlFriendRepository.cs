@@ -44,6 +44,11 @@ namespace FluentBlog.DataRepositories
         {
             return _context.Friends.Count();
         }
+        // 根据id查询友链
+        public Friend GetFriendById(int fid)
+        {
+            return _context.Friends.FirstOrDefault(f => f.Fid == fid);
+        }
         // 获得所有友链
         public List<Friend> GetAllFriends()
         {

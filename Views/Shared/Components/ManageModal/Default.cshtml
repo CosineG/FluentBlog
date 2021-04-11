@@ -1,0 +1,150 @@
+@using FluentBlog.Enum
+@model FluentBlog.ViewModels.ModalViewModel
+
+<div class="modal fade" tabindex="-1" role="dialog" id="manage-modal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @switch (Model.OperateType)
+                    {
+                        case OperateType.Insert:
+                            @:新增
+                            break;
+                        case OperateType.Update:
+                            @:修改
+                            break;
+                    }
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" id="info-form">
+                <div class="modal-body">
+                    @switch (Model.ManageItemType)
+                    {
+                        case ManageItemType.Category:
+                            <div class="form-group">
+                                <input class="form-control font-weight-bold my-2" type="text" asp-for="SelectedMeta.Name" placeholder="名称" />
+                                <span asp-validation-for="SelectedMeta.Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control my-2" type="text" asp-for="SelectedMeta.Slug" placeholder="缩略名" />
+                                <span asp-validation-for="SelectedMeta.Slug" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control my-2" type="text" asp-for="SelectedMeta.Description" placeholder="描述" />
+                                <span asp-validation-for="SelectedMeta.Description" class="text-danger"></span>
+                            </div>
+                            <input type="hidden" asp-for="SelectedMeta.Mid" />
+                            <input type="hidden" value="category" asp-for="SelectedMeta.Type" />
+                            <input type="hidden" value="@Model.ManageItemType" asp-for="ManageItemType" />
+                            break;
+                        case ManageItemType.Tag:
+                            <div class="form-group">
+                                <input class="form-control font-weight-bold my-2" type="text" asp-for="SelectedMeta.Name" placeholder="名称" />
+                                <span asp-validation-for="SelectedMeta.Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control my-2" type="text" asp-for="SelectedMeta.Slug" placeholder="缩略名" />
+                                <span asp-validation-for="SelectedMeta.Slug" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control my-2" type="text" asp-for="SelectedMeta.Description" placeholder="描述" />
+                                <span asp-validation-for="SelectedMeta.Description" class="text-danger"></span>
+                            </div>
+                            <input type="hidden" asp-for="SelectedMeta.Mid" />
+                            <input type="hidden" value="tag" asp-for="SelectedMeta.Type" />
+                            <input type="hidden" value="@Model.ManageItemType" asp-for="ManageItemType" />
+                            break;
+                        case ManageItemType.Feed:
+                            <div class="form-group">
+                                <textarea class="form-control font-weight-bold my-2" rows="3" asp-for="SelectedFeed.Text" placeholder="内容"></textarea>
+                                <span asp-validation-for="SelectedFeed.Text" class="text-danger"></span>
+                            </div>
+                            <input type="hidden" asp-for="SelectedFeed.Uid" />
+                            <input type="hidden" asp-for="SelectedFeed.Fid" />
+                            <input type="hidden" asp-for="SelectedFeed.Likes" />
+                            <input type="hidden" asp-for="SelectedFeed.Created" />
+                            <input type="hidden" value="@Model.ManageItemType" asp-for="ManageItemType" />
+                            break;
+                        case ManageItemType.Friend:
+                            <div class="form-group">
+                                <input class="form-control font-weight-bold my-2" type="text" asp-for="SelectedFriend.Name" placeholder="名称" />
+                                <span asp-validation-for="SelectedFriend.Name" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control my-2" type="text" asp-for="SelectedFriend.Url" placeholder="链接" />
+                                <span asp-validation-for="SelectedFriend.Url" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control my-2" type="text" asp-for="SelectedFriend.Avatar" placeholder="图片" />
+                                <span asp-validation-for="SelectedFriend.Avatar" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control my-2" type="text" asp-for="SelectedFriend.Introduce" placeholder="介绍" />
+                                <span asp-validation-for="SelectedFriend.Introduce" class="text-danger"></span>
+                            </div>
+                            <input type="hidden" asp-for="SelectedFriend.Fid" />
+                            <input type="hidden" value="@Model.ManageItemType" asp-for="ManageItemType" />
+                            break;
+                    }
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    @switch (Model.OperateType)
+                    {
+                        case OperateType.Insert:
+                            <button type="button" class="btn btn-primary" onclick="insert()">确定</button>
+                            break;
+                        case OperateType.Update:
+                            <button type="button" class="btn btn-primary" onclick="update()">确定</button>
+                            break;
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function insert() {
+        $.ajax({
+            url: "/admin/insert",
+            type: "post",
+            data: $("#info-form").serialize(),
+            dataType: "text",
+            success: function(alertText) {
+                if (alertText !== 'ok') {
+                    $('#alert-modal').modal('show');
+                    $('#alert-text').text(alertText);
+                } else {
+                    location.reload(true);
+                }
+            }
+        });
+    }
+
+    function update() {
+        $.ajax({
+            url: "/admin/update",
+            type: "post",
+            data: $("#info-form").serialize(),
+            dataType: "text",
+            success: function(alertText) {
+                if (alertText !== 'ok') {
+                    $('#alert-modal').modal('show');
+                    $('#alert-text').text(alertText);
+                } else {
+                    location.reload(true);
+                }
+            }
+        });
+    }
+
+    $(function() {
+        $('#manage-modal').modal('show');
+    });
+</script>

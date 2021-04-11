@@ -14,7 +14,7 @@ namespace FluentBlog.Models
         [Key]
         public int Fid { get; set; }
         // 内容
-        [DefaultValue(null)]
+        [Required(ErrorMessage = "必须输入内容")]
         public string Text { get; set; }
         // 创建时间
         [Required]

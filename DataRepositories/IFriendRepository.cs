@@ -16,6 +16,8 @@ namespace FluentBlog.DataRepositories
         Friend Update(Friend updateFriend);
         // 查询友链总数
         int GetFriendsCount();
+        // 根据id查询友链
+        Friend GetFriendById(int fid);
         // 获得所有友链
         List<Friend> GetAllFriends();
     }

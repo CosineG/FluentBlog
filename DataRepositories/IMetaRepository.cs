@@ -19,6 +19,8 @@ namespace FluentBlog.DataRepositories
         int GetMetaCount(int? type);
         // 获得所有分类/标签以及其下的文章数目
         Tuple<List<Meta>, List<int>> GetMetasAndCountIncluded(MetaType type);
+        // 用id查询分类/标签
+        Meta GetMetaById(int mid);
         // 用slug查询分类/标签
         Meta GetMetaBySlug(string slug);
         // 获得默认分类
@@ -27,5 +29,7 @@ namespace FluentBlog.DataRepositories
         int GetArchiveOfMetaCount(int mid);
         // 获得分类/标签下第几页的文章
         public List<Archive> GetArchivesByMetaAndPage(int mid, int page, int archivesCountPerPage);
+        // 检查唯一性
+        bool CheckUnique(Meta meta);
     }
 }
