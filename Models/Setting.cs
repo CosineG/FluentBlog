@@ -12,6 +12,7 @@ namespace FluentBlog.Models
     {
         // 配置项名称
         [Key]
+        [Required]
         public string Name { get; set; }
         // 配置项值
         public string Value { get; set; }

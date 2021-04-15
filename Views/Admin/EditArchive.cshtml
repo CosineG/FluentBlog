@@ -40,7 +40,7 @@
             <br />
             <!-- markdown编辑器 -->
             <div id="editor">
-                <textarea style="display: none;">@Model?.Archive.Text</textarea>
+                <textarea style="display: none;" asp-for="Archive.Text"></textarea>
             </div>
             <button class="btn btn-primary m-0" type="submit">提交</button>
         </div>
@@ -100,7 +100,7 @@
                             "info", "releaseIcon", "index"
                         ];
                     },
-                    path: "/lib/editor.md/lib/" // Autoload modules mode, codemirror, marked... dependents libs path
+                    path: "/lib/editor.md/lib/"
                 });
         });
     </script>

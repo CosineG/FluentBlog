@@ -2,7 +2,6 @@
     Layout = "_AdminLayout";
 }
 @using FluentBlog.Enum
-@using System.Text.Json
 @model FluentBlog.ViewModels.ManageViewModel
 
 @section HeadScripts{
@@ -29,18 +28,17 @@
             case ManageItemType.Friend:
                 @:管理友链
                 break;
-            default:
-                throw new ArgumentOutOfRangeException();
         }
     </h3>
     <hr>
 
     <div id="modal-div"></div>
 
-    <form method="post">
+    <form method="post" id="select-form">
         @{
-            var type = Json.Serialize(new {ManageItemType = Model.ManageItemType, Id = 0}).ToString();
+            var type = Json.Serialize(new { ManageItemType = Model.ManageItemType, Id = 0 }).ToString();
         }
+        <input type="hidden" asp-for="ManageItemType"/>
         @switch (Model.ManageItemType)
         {
             case ManageItemType.Archive:
@@ -62,135 +60,135 @@
 
         <button class="btn btn-primary dropdown-toggle m-0 btn-sm" type="button" data-toggle="dropdown" id="selectedButton">选中项</button>
         <div class="dropdown-menu" aria-labelledby="selectedButton">
-            <button class="dropdown-item" href="#">删除</button>
+            <button type="button" class="dropdown-item" data-toggle="modal" data-target="#delete-modal">删除</button>
         </div>
         <div class="overflow-auto">
             <table class="table table-striped">
                 <thead>
-                <tr>
+                    <tr>
+                        @switch (Model.ManageItemType)
+                        {
+                            case ManageItemType.Archive:
+                                <th scope="col"></th>
+                                <th scope="col">标题</th>
+                                <th scope="col">作者</th>
+                                <th scope="col">分类</th>
+                                <th scope="col">日期</th>
+                                break;
+                            case ManageItemType.Category:
+                            case ManageItemType.Tag:
+                                <th scope="col"></th>
+                                <th scope="col">名称</th>
+                                <th scope="col">缩略名</th>
+                                <th scope="col">文章数</th>
+                                <th scope="col">描述</th>
+                                break;
+                            case ManageItemType.Feed:
+                                <th scope="col"></th>
+                                <th scope="col">内容</th>
+                                <th scope="col">作者</th>
+                                <th scope="col">日期</th>
+                                break;
+                            case ManageItemType.Friend:
+                                <th scope="col"></th>
+                                <th scope="col">名称</th>
+                                <th scope="col">地址</th>
+                                <th scope="col">图片</th>
+                                break;
+                        }
+
+                    </tr>
+                </thead>
+                <tbody>
                     @switch (Model.ManageItemType)
                     {
                         case ManageItemType.Archive:
-                            <th scope="col"></th>
-                            <th scope="col">标题</th>
-                            <th scope="col">作者</th>
-                            <th scope="col">分类</th>
-                            <th scope="col">日期</th>
+                            for (int i = 0; i < Model.Archives.Count; i++)
+                            {
+                                <tr>
+                                    <td class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="Items" value="@Model.Archives[i].Aid" id="checkbox-@Model.Archives[i].Aid">
+                                            <label class="form-check-label" name="Items" for="checkbox-@Model.Archives[i].Aid"></label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Admin" asp-action="EditArchive" asp-route-aid="@Model.Archives[i].Aid">
+                                            @Model.Archives[i].Title
+                                        </a>
+                                    </td>
+                                    <td>@Model.Authors[i].DisplayName</td>
+                                    <td>@string.Join(",", Model.ArchivesCategories[i].Select(c => c.Name))</td>
+                                    <td>@Model.Archives[i].Created</td>
+                                </tr>
+                            }
                             break;
                         case ManageItemType.Category:
                         case ManageItemType.Tag:
-                            <th scope="col"></th>
-                            <th scope="col">名称</th>
-                            <th scope="col">缩略名</th>
-                            <th scope="col">文章数</th>
-                            <th scope="col">描述</th>
+                            for (int i = 0; i < Model.Metas.Count; i++)
+                            {
+                                var meta = Json.Serialize(new { ManageItemType = Model.ManageItemType, Id = Model.Metas[i].Mid }).ToString();
+                                <tr>
+                                    <td class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="Items" value="@Model.Metas[i].Mid" id="checkbox-@Model.Metas[i].Mid">
+                                            <label class="form-check-label" name="Items" for="checkbox-@Model.Metas[i].Mid"></label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="showUpdateModal('@meta')">
+                                            @Model.Metas[i].Name
+                                        </a>
+                                    </td>
+                                    <td>@Model.Metas[i].Slug</td>
+                                    <td>@Model.MetasCounts[i]</td>
+                                    <td>@Model.Metas[i].Description</td>
+                                </tr>
+                            }
                             break;
                         case ManageItemType.Feed:
-                            <th scope="col"></th>
-                            <th scope="col">内容</th>
-                            <th scope="col">作者</th>
-                            <th scope="col">日期</th>
+                            for (int i = 0; i < Model.Feeds.Count; i++)
+                            {
+                                var feed = Json.Serialize(new { ManageItemType = Model.ManageItemType, Id = Model.Feeds[i].Fid }).ToString();
+                                <tr>
+                                    <td class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="Items" value="@Model.Feeds[i].Fid" id="checkbox-@Model.Feeds[i].Fid">
+                                            <label class="form-check-label" name="Items" for="checkbox-@Model.Feeds[i].Fid"></label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="showUpdateModal('@feed')">
+                                            @(Model.Feeds[i].Text.Length > 10 ? Model.Feeds[i].Text.Substring(0, 10) : Model.Feeds[i].Text)
+                                        </a>
+                                    </td>
+                                    <td>@Model.Authors[i].DisplayName</td>
+                                    <td>@Model.Feeds[i].Created</td>
+                                </tr>
+                            }
                             break;
                         case ManageItemType.Friend:
-                            <th scope="col"></th>
-                            <th scope="col">名称</th>
-                            <th scope="col">地址</th>
-                            <th scope="col">图片</th>
+                            for (int i = 0; i < Model.Friends.Count; i++)
+                            {
+                                var friend = Json.Serialize(new { ManageItemType = Model.ManageItemType, Id = Model.Friends[i].Fid }).ToString();
+                                <tr>
+                                    <td class="form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="Items" value="@Model.Friends[i].Fid" id="checkbox-@Model.Friends[i].Fid">
+                                            <label class="form-check-label" name="Items" for="checkbox-@Model.Friends[i].Fid"></label>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <a href="#" onclick="showUpdateModal('@friend')">
+                                            @Model.Friends[i].Name
+                                        </a>
+                                    </td>
+                                    <td>@Model.Friends[i].Url</td>
+                                    <td>@Model.Friends[i].Avatar</td>
+                                </tr>
+                            }
                             break;
                     }
-
-                </tr>
-                </thead>
-                <tbody>
-                @switch (Model.ManageItemType)
-                {
-                    case ManageItemType.Archive:
-                        for (int i = 0; i < Model.Archives.Count; i++)
-                        {
-                            <tr>
-                                <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox">
-                                        <label class="form-check-label"></label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <a asp-controller="Admin" asp-action="EditArchive" asp-route-aid="@Model.Archives[i].Aid">
-                                        @Model.Archives[i].Title
-                                    </a>
-                                </td>
-                                <td>@Model.Authors[i].DisplayName</td>
-                                <td>@string.Join(",", Model.ArchivesCategories[i].Select(c => c.Name))</td>
-                                <td>@Model.Archives[i].Created</td>
-                            </tr>
-                        }
-                        break;
-                    case ManageItemType.Category:
-                    case ManageItemType.Tag:
-                        for (int i = 0; i < Model.Metas.Count; i++)
-                        {
-                            var meta = Json.Serialize(new {ManageItemType = Model.ManageItemType, Id = Model.Metas[i].Mid}).ToString();
-                            <tr>
-                                <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox">
-                                        <label class="form-check-label"></label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <a href="#" onclick="showUpdateModal('@meta')">
-                                        @Model.Metas[i].Name
-                                    </a>
-                                </td>
-                                <td>@Model.Metas[i].Slug</td>
-                                <td>@Model.MetasCounts[i]</td>
-                                <td>@Model.Metas[i].Description</td>
-                            </tr>
-                        }
-                        break;
-                    case ManageItemType.Feed:
-                        for (int i = 0; i < Model.Feeds.Count; i++)
-                        {
-                            var feed = Json.Serialize(new {ManageItemType = Model.ManageItemType, Id = Model.Feeds[i].Fid}).ToString();
-                            <tr>
-                                <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox">
-                                        <label class="form-check-label"></label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <a href="#" onclick="showUpdateModal('@feed')">
-                                        @(Model.Feeds[i].Text.Length > 10 ? Model.Feeds[i].Text.Substring(0, 10) : Model.Feeds[i].Text)
-                                    </a>
-                                </td>
-                                <td>@Model.Authors[i].DisplayName</td>
-                                <td>@Model.Feeds[i].Created</td>
-                            </tr>
-                        }
-                        break;
-                    case ManageItemType.Friend:
-                        for (int i = 0; i < Model.Friends.Count; i++)
-                        {
-                            var friend = Json.Serialize(new {ManageItemType = Model.ManageItemType, Id = Model.Friends[i].Fid}).ToString();
-                            <tr>
-                                <td>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox">
-                                        <label class="form-check-label"></label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <a href="#" onclick="showUpdateModal('@friend')">
-                                        @Model.Friends[i].Name
-                                    </a>
-                                </td>
-                                <td>@Model.Friends[i].Url</td>
-                                <td>@Model.Friends[i].Avatar</td>
-                            </tr>
-                        }
-                        break;
-                }
                 </tbody>
             </table>
         </div>
@@ -210,6 +208,26 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">提示</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                确认删除？
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="select-form" class="btn btn-danger" asp-action="Delete">确认</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>

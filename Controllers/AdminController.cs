@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 
 namespace FluentBlog.Controllers
 {
@@ -134,11 +135,9 @@ namespace FluentBlog.Controllers
         /// 编辑文章
         /// </summary>
         [HttpPost]
-        public IActionResult EditArchive(EditArchiveViewModel model, [FromForm(Name = "editor-markdown-doc")]
-            string text)
+        public IActionResult EditArchive(EditArchiveViewModel model)
         {
             var archive = model.Archive;
-            archive.Text = text;
             var categories = model.Categories.Where(c => c.Value).Select(c => c.Key).ToList();
             var tags = model.Tags.Where(t => t.Value).Select(t => t.Key).ToList();
             var metas = categories.Union(tags).ToList();
@@ -156,7 +155,7 @@ namespace FluentBlog.Controllers
             // 新文章
             if (archive.Aid == 0)
             {
-                archive.Aid = _archiveRepository.GetMinAvailableId();
+                // archive.Aid = _archiveRepository.GetMinAvailableId();
                 archive.Uid = _userManager.GetUserAsync(HttpContext.User).Result.Id;
                 archive.Created = DateTime.Now;
                 _archiveRepository.Insert(archive);
@@ -361,6 +360,48 @@ namespace FluentBlog.Controllers
         }
 
         /// <summary>
+        /// 删除操作
+        /// </summary>
+        [HttpPost]
+        public IActionResult Delete([FromForm] ManageItemType manageItemType, [FromForm] List<int> items)
+        {
+            switch (manageItemType)
+            {
+                case ManageItemType.Archive:
+                    foreach (var item in items)
+                    {
+                        _archiveRepository.Delete(item);
+                    }
+
+                    break;
+                case ManageItemType.Category:
+                case ManageItemType.Tag:
+                    foreach (var item in items)
+                    {
+                        _metaRepository.Delete(item);
+                    }
+
+                    break;
+                case ManageItemType.Feed:
+                    foreach (var item in items)
+                    {
+                        _feedRepository.Delete(item);
+                    }
+
+                    break;
+                case ManageItemType.Friend:
+                    foreach (var item in items)
+                    {
+                        _friendRepository.Delete(item);
+                    }
+
+                    break;
+            }
+
+            return RedirectToAction("Manage", "Admin", new {manageItemType = manageItemType});
+        }
+
+        /// <summary>
         /// 显示编辑窗口
         /// </summary>
         [HttpPost]
@@ -385,6 +426,32 @@ namespace FluentBlog.Controllers
 
             modalViewModel.OperateType = OperateType.Update;
             return ViewComponent("ManageModal", new {modalViewModel = modalViewModel});
+        }
+
+
+        /// <summary>
+        /// 设置页面
+        /// </summary>
+        [HttpGet]
+        public IActionResult Config()
+        {
+            ConfigViewModel configViewModel = new ConfigViewModel
+            {
+                Settings = _settingRepository.GetSettings()
+            };
+            ViewBag.Title = "设置" + " - ";
+            return View(configViewModel);
+        }
+
+        /// <summary>
+        /// 更新设置
+        /// </summary>
+        [HttpPost]
+        public IActionResult Config(ConfigViewModel configViewModel)
+        {
+            var settings = configViewModel.Settings;
+            _settingRepository.UpdateMultipleSettings(settings);
+            return RedirectToAction("Config");
         }
     }
 }

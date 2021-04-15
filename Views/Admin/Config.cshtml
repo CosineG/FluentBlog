@@ -1,0 +1,145 @@
+@{
+    Layout = "_AdminLayout";
+    var contacts = new HtmlString(Model.Settings["Contacts"]);
+}
+@using System.Text
+@using Microsoft.AspNetCore.Html
+@model FluentBlog.ViewModels.ConfigViewModel
+
+@section HeadScripts{
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/editor.md/css/editormd.min.css" />
+        <script src="~/lib/editor.md/editormd.min.js"></script>
+        <script src="~/lib/editor.md/lib/marked.min.js"></script>
+        <script src="~/lib/editor.md/lib/prettify.min.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css" />
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
+    </environment>
+
+    <link href="https://cdn.jsdelivr.net/npm/jsoneditor@9.3.1/dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/jsoneditor@9.3.1/dist/jsoneditor.min.js"></script>
+}
+
+
+<!-- 主体 -->
+<div class="card-body">
+    <!-- 标题 -->
+    <h3 class="card-title font-weight-bold my-2">
+        设置
+    </h3>
+    <hr>
+    <form class="p-2" method="post">
+        <h4 class="font-weight-bold pb-2">博客信息</h4>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["BlogName"]">博客名称</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["BlogName"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["BlogIntro"]">博客简介</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["BlogIntro"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["Notice"]">公告栏</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["Notice"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["Copyright"]">底部版权信息</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["Copyright"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["About"]">关于</label>
+            <div id="about-editor">
+                <textarea style="display: none;" asp-for="@Model.Settings["About"]"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["ApplyFriendNotice"]">友链页介绍</label>
+            <div id="apply-friend-notice-editor">
+                <textarea style="display: none;" asp-for="@Model.Settings["ApplyFriendNotice"]"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["Contacts"]">联系方式</label>
+            <div id="json-editor"></div>
+            <input id="contact-input" type="hidden" asp-for="@Model.Settings["Contacts"]" />
+        </div>
+        <hr />
+        <h4 class="font-weight-bold pb-2">功能配置</h4>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["ArchivesCountPerPage"]">显示：每页文章数量</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["ArchivesCountPerPage"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["FeedSwitch"]">动态：开关</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["FeedSwitch"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["DonateSwitch"]">赞赏：开关</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["DonateSwitch"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["DonateAlipay"]">赞赏：支付宝二维码</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["DonateAlipay"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["DonateWechat"]">赞赏：微信二维码</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["DonateWechat"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["LeanCloudAPIUrl"]">评论：LeanCloudAPIUrl</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["LeanCloudAPIUrl"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["LeanCloudAppID"]">评论：LeanCloudAppID</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["LeanCloudAppID"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["LeanCloudAppKey"]">评论：LeanCloudAppKey</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["LeanCloudAppKey"]" />
+        </div>
+
+        <button class="btn btn-primary m-0 mt-2" type="submit">保存</button>
+    </form>
+</div>
+
+@section BottomScripts{
+    <script type="text/javascript">
+        $(function() {
+            var aboutEditor = editormd("about-editor",
+                {
+                    height: "300px",
+                    autoFocus: false,
+                    toolbarIcons: function() {
+                        return [
+                            "undo", "redo", "|", "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "html-entities", "pagebreak", "|", "goto-line", "watch", "preview", "clear", "search", "|", "info", "releaseIcon", "index"
+                        ];
+                    },
+                    path: "/lib/editor.md/lib/"
+                });
+            var applyFriendNoticeEditor = editormd("apply-friend-notice-editor",
+                {
+                    height: "300px",
+                    autoFocus: false,
+                    toolbarIcons: function() {
+                        return [
+                            "undo", "redo", "|", "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "html-entities", "pagebreak", "|", "goto-line", "watch", "preview", "clear", "search", "|", "info", "releaseIcon", "index"
+                        ];
+                    },
+                    path: "/lib/editor.md/lib/"
+                });
+            const jsonEditor = new JSONEditor(document.getElementById("json-editor"),
+                {
+                    templates: [{ 'Icon': '', 'Title': '', 'Text': '', 'Link': '' }],
+                    onChangeText(jsonText) {
+                        $('#contact-input').val(jsonText);
+                    }
+                });
+            jsonEditor.set(@contacts);
+        });
+    </script>
+}
