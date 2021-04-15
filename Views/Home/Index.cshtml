@@ -11,15 +11,6 @@
     </environment>
 }
 
-<style>
-    .view {
-        width: 100%;
-        height: 0;
-        padding-bottom: 30%;
-        overflow: hidden;
-    }
-
-</style>
 
 <!-- 显示当前选择的分类 -->
 @if (Model.CurrentMeta != null)
@@ -40,6 +31,11 @@
                     case "tag":
                         <h2 class="card-title font-weight-bold m-0">标签：@Model.CurrentMeta.Name@pageInfo</h2>
                         break;
+                }
+                if (!string.IsNullOrEmpty(Model.CurrentMeta.Description))
+                {
+                    <hr/>
+                    @Model.CurrentMeta.Description
                 }
             }
         </div>

@@ -82,13 +82,47 @@ namespace FluentBlog.Controllers
         }
 
         /// <summary>
-        /// 控制台首页
+        /// 注册页面
         /// </summary>
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Register()
         {
-            ViewBag.Title = "控制台" + " - ";
             return View();
+        }
+
+        /// <summary>
+        /// 注册操作
+        /// </summary>
+        /// <param name="model"></param>
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new User
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    DisplayName = model.DisplayName
+                };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, isPersistent: true);
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            model.LastRegisterFailed = true;
+            return View(model);
+        }
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>

@@ -1,0 +1,78 @@
+@using Microsoft.AspNetCore.Http
+@model FluentBlog.ViewModels.RegisterViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>@(ViewBag.Title + ViewBag.Settings["BlogName"])</title>
+    <meta name="viewport" content="width=device-width"/>
+    <link href="~/css/reset.css" rel="stylesheet"/>
+
+    <environment include="Development">
+        <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet"/>
+        <script src="~/lib/jquery/jquery.js"></script>
+        <script src="~/lib/twitter-bootstrap/js/bootstrap.bundle.min.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"/>
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    </environment>
+
+    <link href="~/lib/FDBootstrap/css/fluent.css" rel="stylesheet"/>
+    <link href="~/lib/micon/css/micon.min.css" rel="stylesheet"/>
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.3/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.12/dist/jquery.validate.unobtrusive.min.js"></script>
+
+</head>
+<body>
+<div class="min-vh-100 flex-center" style="background-image: url(/images/backround.svg); background-attachment: fixed">
+    <div class="card shadow m-auto w-25">
+        @if (Model != null && Model.LastRegisterFailed)
+        {
+            <div class="alert alert-danger" role="alert">
+                注册失败，请检查后再试
+            </div>
+        }
+        <!-- 主体 -->
+        <div class="card-body">
+            <!-- 标题 -->
+            <h3 class="card-title font-weight-bold mb-2">
+                注册
+            </h3>
+            <hr>
+
+            <!-- form -->
+            <form method="post">
+                <div class="form-group">
+                    <label asp-for="Email">邮箱</label>
+                    <input asp-for="Email" class="form-control" placeholder="请输入邮箱">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="DisplayName">昵称</label>
+                    <input asp-for="DisplayName" class="form-control" placeholder="请输入昵称">
+                    <span asp-validation-for="DisplayName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Password">密码</label>
+                    <input asp-for="Password" class="form-control" placeholder="请输入密码">
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword">确认密码</label>
+                    <input asp-for="ConfirmPassword" class="form-control" placeholder="请确认密码">
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary ml-0">注册</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
