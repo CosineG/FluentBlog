@@ -1,9 +1,12 @@
+@using Microsoft.AspNetCore.Html
+
 <footer class="page-footer shadow">
     <div class="footer-copyright bg-white text-dark text-center small py-3 ">
         <!-- 未设置则输出默认 -->
         @if (!string.IsNullOrEmpty(ViewBag.Settings["Copyright"]))
         {
-            @ViewBag.Settings["Copyright"]
+            var htmlString = new HtmlString(ViewBag.Settings["Copyright"]);
+            @htmlString;
         }
         else
         {

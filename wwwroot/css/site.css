@@ -1,30 +1,26 @@
-#sidebar {
-    opacity: 0
-}
+#sidebar { top: 15vh}
 
 #avator {
     width: 60%;
-    height: 60%;
+    height: auto;
 }
 
 @media screen and (min-device-width: 768px) {
-     #content {
-         min-height: 100vh;
-     }
- }
-
-#background {
-    background-color: #FAF9F8;
+    #content { min-height: 100vh; }
 }
+
+[data-toggle="collapse"].collapsed .mi.collapse-icon:before { content: "\EAC6"; }
+
+[data-toggle="collapse"] .mi.collapse-icon:before { content: "\EAC0"; }
+
+#background { background-color: #FAF9F8; }
 
 .toolbar {
     width: 50px !important;
     height: 50px
 }
 
-.mi:hover {
-    margin-left: 0 !important;
-}
+.mi:hover { margin-left: 0 !important; }
 
 .mi-lg {
     font-size: 1.33333333em !important;
@@ -32,34 +28,22 @@
     vertical-align: -30% !important
 }
 
-.mi-2x {
-     font-size: 2em !important
- }
+.mi-2x { font-size: 2em !important }
 
-.text-white {
-    color: #fff !important;
-}
+.text-white { color: #fff !important; }
 
 .bg-gray {
     background-color: #8f8f8f !important;
     border-color: #8f8f8f !important;
 }
 
-.square {
-    border-radius: 0;
-}
+.square { border-radius: 0; }
 
-.blockquote {
-     font-size: 1rem;
- }
+.blockquote { font-size: 1rem; }
 
-.medium-small {
-     font-size: 0.9rem !important
- }
+.medium-small { font-size: 0.9rem !important }
 
-.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
-     font-weight: bold !important;
- }
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 { font-weight: bold !important; }
 
 .donate-qrcode {
     width: 80%;
@@ -67,17 +51,7 @@
     height: auto;
 }
 
-[data-toggle="collapse"].collapsed .mi:before {
-    content: "\EAC6";
-}
-
-[data-toggle="collapse"] .mi:before {
-    content: "\EAC0";
-}
-
-.friend-introduce {
-    height: 50px;
-}
+.friend-introduce { height: 50px; }
 
 .view {
     width: 100%;

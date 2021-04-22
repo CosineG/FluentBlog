@@ -21,23 +21,10 @@
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/clamp-js@0.7.0/clamp.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/colorthief@2.3.2/dist/color-thief.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js"></script>
     </environment>
 
     <script>
-        // 卡片设置为头像的主题色
-        function setColor(avatar, i) {
-            const colorThief = new ColorThief();
-            const rgbToHex = (r, g, b) => '#' +
-                [r, g, b].map(x => {
-                    const hex = x.toString(16);
-                    return hex.length === 1 ? '0' + hex : hex;
-                }).join('');
-            var color = colorThief.getColor(avatar);
-            $(`.color-${i}`).css("background-color", rgbToHex(color[0], color[1], color[2]));
-        }
-
         // 头像错误时用默认头像
         function avatarError(avatar) {
             avatar.src = "/images/avatarError.jpg";
@@ -96,14 +83,14 @@
                         var friend = Model.Friends[i];
                         <div class="col-sm-6 col-md-4">
                             <div class="friend card mb-4 shadow d-none">
-                                <div class="py-2 w-100 @("color-" + i)"></div>
+                                <div class="py-2 w-100 bg-primary"></div>
                                 <div class="position-relative h-100">
-                                    <div class="h-50 w-100 @("color-" + i) position-absolute text-white text-center">
+                                    <div class="h-50 w-100 bg-primary position-absolute text-white text-center">
                                     </div>
                                     <!-- 头像 -->
                                     <div class="w-50 mx-auto position-relative">
                                         <a href="@friend.Url" target="_blank">
-                                            <img class="card-img-top rounded-circle" onload="setColor(this, @i)" src="@friend.Avatar" onerror="avatarError(this)" crossOrigin="anonymous">
+                                            <img class="card-img-top rounded-circle" src="@friend.Avatar" onerror="avatarError(this)">
                                         </a>
                                     </div>
                                 </div>

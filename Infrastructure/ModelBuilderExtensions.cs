@@ -28,7 +28,7 @@ namespace FluentBlog.Infrastructure
                     Aid = 1,
                     Title = "欢迎使用Fluent Blog",
                     Text = "欢迎使用Fluent Blog。这里是使用了asp.net core构建的博客框架。",
-                    Created = DateTime.Parse("2020-10-28"),
+                    Created = DateTime.Now,
                     Uid = "d89af503-9855-465b-a575-fffa345f97e6"
                 }
             );
@@ -95,6 +95,21 @@ namespace FluentBlog.Infrastructure
                 {
                     Name = "About",
                     Value = "欢迎使用Fluent Blog。这里是“关于”页面。"
+                },
+                new Setting
+                {
+                    Name = "Avatar",
+                    Value = ""
+                },
+                new Setting
+                {
+                    Name = "Favicon",
+                    Value = ""
+                },
+                new Setting
+                {
+                    Name = "AllowRegister",
+                    Value = "true"
                 },
                 new Setting
                 {

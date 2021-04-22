@@ -85,9 +85,12 @@ namespace FluentBlog.Controllers
         /// 注册页面
         /// </summary>
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register()
         {
-            return View();
+            var settings = _settingRepository.GetSettings();
+            if (settings["AllowRegister"] == "true") return View();
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>
@@ -95,9 +98,11 @@ namespace FluentBlog.Controllers
         /// </summary>
         /// <param name="model"></param>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            var settings = _settingRepository.GetSettings();
+            if (ModelState.IsValid && settings["AllowRegister"] == "true")
             {
                 var user = new User
                 {
@@ -112,10 +117,10 @@ namespace FluentBlog.Controllers
                     return RedirectToAction("Index", "Home");
                 }
             }
+
             model.LastRegisterFailed = true;
             return View(model);
         }
-
 
 
         [HttpPost]
@@ -322,6 +327,7 @@ namespace FluentBlog.Controllers
                     modalViewModel.SelectedFeed.Created = DateTime.Now;
                     ModelState.Remove("SelectedFeed.Fid");
                     ModelState.Remove("SelectedFeed.Uid");
+                    ModelState.Remove("SelectedFeed.Likes");
                     ModelState.Remove("SelectedFeed.Created");
                     if (ModelState.IsValid)
                     {

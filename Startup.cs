@@ -15,6 +15,7 @@ using FluentBlog.DataRepositories;
 using FluentBlog.Infrastructure;
 using FluentBlog.CustomMiddlewares;
 using FluentBlog.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 
 namespace FluentBlog
 {
@@ -54,9 +55,9 @@ namespace FluentBlog
             });
             services.AddControllersWithViews(a => a.EnableEndpointRouting = false)
                 .AddXmlSerializerFormatters()
-                .AddJsonOptions(option => { })
+                .AddJsonOptions(option => { });
                 // Razor页面实时编译，方便调试
-                .AddRazorRuntimeCompilation();
+                //.AddRazorRuntimeCompilation();
             // 依赖注入仓储
             services.AddScoped<IMetaRepository, SqlMetaRepository>();
             services.AddScoped<IArchiveRepository, SqlArchiveRepository>();
@@ -80,7 +81,10 @@ namespace FluentBlog
             {
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
             }
-
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();

@@ -7,6 +7,10 @@
 <html>
 <head>
     <title>@(ViewBag.Title + ViewBag.Settings["BlogName"])</title>
+    @if (!string.IsNullOrEmpty(ViewBag.Settings["Favicon"]))
+    {
+        <link rel="shortcut icon" type="image/x-icon" href="@ViewBag.Settings["Favicon"]" />
+    }
     <meta name="viewport" content="width=device-width" />
     <link href="~/css/reset.css" rel="stylesheet" />
 

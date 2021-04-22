@@ -15,7 +15,7 @@
     </environment>
 
     <environment exclude="Development">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.preview.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/yremp/editormd/css/editormd.min.css" />
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/editormd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/marked.min.js"></script>
         <script src="https://cdn.jsdelivr.net/gh/yremp/editormd/lib/prettify.min.js"></script>
@@ -42,6 +42,14 @@
         <div class="form-group">
             <label asp-for="@Model.Settings["BlogIntro"]">博客简介</label>
             <input class="form-control" type="text" asp-for="@Model.Settings["BlogIntro"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["Avatar"]">博客头像</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["Avatar"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["Favicon"]">博客图标</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["Favicon"]" />
         </div>
         <div class="form-group">
             <label asp-for="@Model.Settings["Notice"]">公告栏</label>
@@ -73,6 +81,10 @@
         <div class="form-group">
             <label asp-for="@Model.Settings["ArchivesCountPerPage"]">显示：每页文章数量</label>
             <input class="form-control" type="text" asp-for="@Model.Settings["ArchivesCountPerPage"]" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Settings["AllowRegister"]">用户：允许注册</label>
+            <input class="form-control" type="text" asp-for="@Model.Settings["AllowRegister"]" />
         </div>
         <div class="form-group">
             <label asp-for="@Model.Settings["FeedSwitch"]">动态：开关</label>
@@ -119,6 +131,7 @@
                             "undo", "redo", "|", "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "html-entities", "pagebreak", "|", "goto-line", "watch", "preview", "clear", "search", "|", "info", "releaseIcon", "index"
                         ];
                     },
+                    htmlDecode: true,
                     path: "/lib/editor.md/lib/"
                 });
             var applyFriendNoticeEditor = editormd("apply-friend-notice-editor",
@@ -130,6 +143,7 @@
                             "undo", "redo", "|", "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|", "h1", "h2", "h3", "h4", "h5", "h6", "|", "list-ul", "list-ol", "hr", "|", "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime", "html-entities", "pagebreak", "|", "goto-line", "watch", "preview", "clear", "search", "|", "info", "releaseIcon", "index"
                         ];
                     },
+                    htmlDecode: true,
                     path: "/lib/editor.md/lib/"
                 });
             const jsonEditor = new JSONEditor(document.getElementById("json-editor"),

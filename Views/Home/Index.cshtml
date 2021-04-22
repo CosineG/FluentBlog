@@ -125,7 +125,7 @@
             </li>
         }
         <!--数字页码页-->
-        @for (int i = Model.PageNum - 2; i < Model.PageNum + 2; i++)
+        @for (int i = Model.PageNum - 2; i <= Model.PageNum + 2; i++)
         {
             if (i == Model.PageNum)
             {

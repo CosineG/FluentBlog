@@ -1,7 +1,6 @@
 @using FluentBlog.Models
 @model FluentBlog.ViewModels.FilingViewModel
 
-
 <div class="card mb-4 shadow">
     <!--主体-->
     <div class="card-body">
@@ -40,7 +39,7 @@
                         <div>
                             <a data-toggle="collapse" href="#@("year-" + archivesOfYear[0][0].Created.Year)">
                                 <h4>
-                                    <i class="mi"></i>
+                                    <i class="mi collapse-icon"></i>
                                     @archivesOfYear[0][0].Created.Year 年
                                 </h4>
                             </a>
@@ -55,7 +54,7 @@
                                         <!--显示按钮-->
                                         <a data-toggle="collapse" href="#@("month-" + archivesOfMonth[0].Created.Year + "-" + @archivesOfMonth[0].Created.Month)">
                                             <h5>
-                                                <i class="mi"></i>
+                                                <i class="mi collapse-icon"></i>
                                                 @archivesOfMonth[0].Created.Month 月
                                             </h5>
                                         </a>

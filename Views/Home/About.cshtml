@@ -58,7 +58,10 @@
 @section BottomScripts{
     <script type="text/javascript">
         $(function () {
-            var editormdView = editormd.markdownToHTML("description", {});
+            var editormdView = editormd.markdownToHTML("description",
+                {
+                    htmlDecode: true
+                });
             $('.progress-cover').css('display', 'none');
         });
     </script>

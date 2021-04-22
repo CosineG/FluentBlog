@@ -200,7 +200,8 @@
             // 解析markdown
             var editormdView = editormd.markdownToHTML("description",
                 {
-                    path: "lib/editor.md/lib",
+                    path: "https://cdn.jsdelivr.net/npm/editor.md@1.5.0/lib/",
+                    htmlDecode: true,
                     tocStartLevel: 2,
                     tocContainer: "#toc-container",
                     tocDropdown: false
