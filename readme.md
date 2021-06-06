@@ -1,5 +1,5 @@
-##Fluent Blog##
-
+Fluent Blog
+===========
 
 - 学习ASP.NET Core的同时练习编写的渣作
 - 采用ASP.NET Core 5.0开发的博客，基于MVC模式
@@ -17,3 +17,7 @@
 接下来可能的目标：
 
 - 改为前后端分离，使用Blazor框架
+
+
+示例网站：
+[Fluent Blog](https://fluent.cosineg.com)
